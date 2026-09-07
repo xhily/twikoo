@@ -42,8 +42,66 @@ jobs:
       - if: "!github.event.release.prerelease"
         run: cd src/server/netlify && npm publish --provenance
 
-  publish-docker:
+  verify-npm:
     needs: publish-npm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Wait for npm packages to be available
+        run: |
+          if [ "${{ github.event.release.prerelease }}" = "true" ]; then
+            NPM_TAG="beta"
+          else
+            NPM_TAG="latest"
+          fi
+
+          # All published packages with their paths
+          PACKAGES=(
+            "twikoo:."
+            "twikoo-func:src/server/function/twikoo"
+            "twikoo-vercel:src/server/vercel"
+            "tkserver:src/server/self-hosted"
+            "twikoo-netlify:src/server/netlify"
+          )
+
+          echo "NPM tag: $NPM_TAG"
+          echo "Packages to verify: ${PACKAGES[*]}"
+
+          TIMEOUT=600  # 10 minutes
+          INTERVAL=15  # 15 seconds
+          ELAPSED=0
+
+          while [ $ELAPSED -lt $TIMEOUT ]; do
+            ALL_READY=true
+            for ENTRY in "${PACKAGES[@]}"; do
+              PKG="${ENTRY%%:*}"
+              DIR="${ENTRY##*:}"
+              PKG_VERSION=$(cd "$DIR" && node -p "require('./package.json').version")
+              ACTUAL=$(npm view "$PKG@$NPM_TAG" version --registry=https://registry.npmjs.org 2>/dev/null || true)
+              if [ "$ACTUAL" != "$PKG_VERSION" ]; then
+                echo "  ❌ $PKG: expected $PKG_VERSION (tag: $NPM_TAG), got '${ACTUAL:-not found}'"
+                ALL_READY=false
+              else
+                echo "  ✅ $PKG@$NPM_TAG = $ACTUAL"
+              fi
+            done
+
+            if [ "$ALL_READY" = true ]; then
+              echo "✅ All npm packages are available."
+              exit 0
+            fi
+
+            REMAINING=$((TIMEOUT - ELAPSED))
+            echo "⏳ Not all packages ready yet. ${REMAINING}s remaining. Retrying in ${INTERVAL}s..."
+            sleep $INTERVAL
+            ELAPSED=$((ELAPSED + INTERVAL))
+          done
+
+          echo "❌ Timed out after ${TIMEOUT}s waiting for npm packages to become available."
+          exit 1
+
+  publish-docker:
+    needs: [publish-npm, verify-npm]
     runs-on: ubuntu-latest
     steps:
       -
@@ -87,7 +145,7 @@ jobs:
           build-args: NODE_IMAGE=arm32v7/node
 
   publish-pkg:
-    needs: publish-npm
+    needs: [publish-npm, verify-npm]
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6
