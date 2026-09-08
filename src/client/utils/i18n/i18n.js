@@ -126,6 +126,8 @@ const defaultGravatar = [
  *   'uz-UZ'  // Contributor: [Nomad](https://github.com/digitaltwinz)
  *   'ja-JP'  // Contributor: [yumexupanic](https://github.com/yumexupanic), [HakoMC](https://github.com/HakoMC)
  *   'ko-KR'  // Contributor: [다배](https://github.com/tipsyoncola)
+ *   'vi-VN'  // Contributor: (you!)
+ *   'id-ID'  // Contributor: [Rijal](https://github.com/frijal)
  * ]
  */
 export default {
@@ -136,7 +138,9 @@ export default {
     'Client version: ',
     'Клиент версияси: ',
     'クライアントバージョン：',
-    '클라이언트 버전: '
+    '클라이언트 버전: ',
+    'Phiên bản client: ',
+    'Versi klien: '
   ],
   ADMIN_SERVER_VERSION: [
     '云函数版本：',
@@ -145,7 +149,9 @@ export default {
     'Server version: ',
     'Сервернинг версияси: ',
     'サーバーサイドバージョン: ',
-    '서버 버전: '
+    '서버 버전: ',
+    'Phiên bản cloud function: ',
+    'Versi server: '
   ],
   [S.AC]: [
     '评论管理',
@@ -154,7 +160,9 @@ export default {
     'Comment',
     'Изоҳ',
     'コメント管理',
-    '댓글 관리'
+    '댓글 관리',
+    'Quản lý bình luận',
+    'Manajemen Komentar'
   ],
   [S.AC + '_DELETE']: [
     '删除',
@@ -163,7 +171,9 @@ export default {
     'Delete',
     'Ўчирмоқ',
     '削除',
-    '삭제'
+    '삭제',
+    'Xóa',
+    'Hapus'
   ],
   [S.AC + '_DELETE_CONFIRM']: [
     '确认删除？',
@@ -172,7 +182,9 @@ export default {
     'Confirm deletion?',
     'Ўчириш тасдиқлансинми?',
     '本当に削除しますか？',
-    '정말 삭제하시겠습니까?'
+    '정말 삭제하시겠습니까?',
+    'Xác nhận xóa?',
+    'Konfirmasi hapus?'
   ],
   [S.AC + '_FILTER_ALL']: [
     '全部',
@@ -181,7 +193,9 @@ export default {
     'All',
     'Ҳаммаси',
     '全部',
-    '전체'
+    '전체',
+    'Tất cả',
+    'Semua'
   ],
   [S.AC + '_FILTER_VISIBLE']: [
     '只看可见',
@@ -190,7 +204,9 @@ export default {
     'Visible',
     'Кўринадиган',
     '表示中のみ',
-    '표시 댓글'
+    '표시 댓글',
+    'Chỉ hiển thị',
+    'Hanya Terlihat'
   ],
   [S.AC + '_FILTER_HIDDEN']: [
     '只看隐藏',
@@ -199,7 +215,9 @@ export default {
     'Hidden',
     'Яширилган',
     '非表示中のみ',
-    '숨김 댓글'
+    '숨김 댓글',
+    'Chỉ ẩn',
+    'Hanya Tersembunyi'
   ],
   [S.AC + '_HIDE']: [
     '隐藏',
@@ -208,7 +226,9 @@ export default {
     'Hide',
     'Яширмоқ',
     '非表示',
-    '숨기기'
+    '숨기기',
+    'Ẩn',
+    'Sembunyikan'
   ],
   [S.AC + '_IS_SPAM_SUFFIX']: [
     ' (已隐藏)',
@@ -217,7 +237,9 @@ export default {
     ' (Hidden)',
     ' (Яширилган)',
     ' (非表示)',
-    ' (숨김 처리됨)'
+    ' (숨김 처리됨)',
+    ' (Đã ẩn)',
+    ' (Tersembunyi)'
   ],
   [S.AC + '_SEARCH']: [
     '搜索',
@@ -226,7 +248,9 @@ export default {
     'Search',
     'Излаш',
     '検索',
-    '검색'
+    '검색',
+    'Tìm kiếm',
+    'Cari'
   ],
   [S.AC + '_SEARCH_PLACEHOLDER']: [
     '搜索昵称、邮箱、网址、IP、评论正文、文章地址',
@@ -235,7 +259,9 @@ export default {
     'Search by nick, mail, website, IP, comment, or article path',
     'Тахаллус, почта, веб-сайт, ИП, шарҳ ёки мақола йўли бўйича излаш',
     '名前、メールアドレス、ウェブサイトURL、IPアドレス、コメント内容、記事のURLを検索',
-    '닉네임, 이메일, 웹사이트, IP, 댓글 내용, 게시글 주소로 검색'
+    '닉네임, 이메일, 웹사이트, IP, 댓글 내용, 게시글 주소로 검색',
+    'Tìm theo tên, email, website, IP, nội dung bình luận hoặc đường dẫn bài viết',
+    'Cari berdasarkan nama, email, situs web, IP, isi komentar, atau alamat artikel'
   ],
   [S.AC + '_SHOW']: [
     '显示',
@@ -244,7 +270,9 @@ export default {
     'Show',
     'Кўрсатиш',
     '表示',
-    '표시'
+    '표시',
+    'Hiển thị',
+    'Tampilkan'
   ],
   [S.AC + '_TOP']: [
     '置顶',
@@ -253,7 +281,9 @@ export default {
     'Pin',
     'Қадамоқ',
     '固定する',
-    '고정'
+    '고정',
+    'Ghim lên đầu',
+    'Sematkan'
   ],
   [S.AC + '_UNTOP']: [
     '取消置顶',
@@ -262,7 +292,9 @@ export default {
     'Unpin',
     'Қадоқни ечмоқ',
     '固定を解除',
-    '고정 해제'
+    '고정 해제',
+    'Bỏ ghim',
+    'Lepas Sematan'
   ],
   [S.AC + '_VIEW']: [
     '查看',
@@ -271,7 +303,9 @@ export default {
     'View',
     'Кўриниш',
     '閲覧',
-    '보기'
+    '보기',
+    'Xem',
+    'Lihat'
   ],
   [S.AC + '_SECURITY_ALERT']: [
     '评论链接与本站不同！出于安全考虑，请手动复制以下网址访问：',
@@ -280,7 +314,9 @@ export default {
     'The comment link is different from this site! For security reasons, please manually copy the following URL to visit:',
     'Шарҳ ҳаволаси бу сайтдан фарқ қилади! Хавфсизлик сабабларига кўра, илтимос, қуйидаги URL манзилни қўлда нусха олинг:',
     'コメントリンクがこのサイトと異なります！セキュリティ上の理由から、以下のURLを手動でコピーしてアクセスしてください：',
-    '댓글 링크가 이 사이트와 다릅니다! 보안상의 이유로, 다음 URL을 수동으로 복사하여 방문하세요:'
+    '댓글 링크가 이 사이트와 다릅니다! 보안상의 이유로, 다음 URL을 수동으로 복사하여 방문하세요:',
+    'Liên kết bình luận khác với trang này! Vì lý do bảo mật, hãy sao chép thủ công URL sau để truy cập:',
+    'Tautan komentar berbeda dengan situs ini! Demi keamanan, silakan salin manual URL berikut untuk mengunjunginya:'
   ],
   [S.AC + '_PARSE_ERROR']: [
     '无法解析评论链接，请仔细检查链接后手动复制以下网址访问：',
@@ -289,7 +325,9 @@ export default {
     'Unable to parse comment link. Please check and manually copy the following URL:',
     'Шарҳ ҳаволасини таҳлил қилиб бўлмади. Илтимос, қуйидаги манзилни текширинг ва қўлда нусха олинг:',
     'コメントリンクを解析できません。以下のURLを確認して手動でコピーしてください：',
-    '댓글 링크를 파싱할 수 없습니다. 다음 주소를 확인하고 수동으로 복사하세요:'
+    '댓글 링크를 파싱할 수 없습니다. 다음 주소를 확인하고 수동으로 복사하세요:',
+    'Không thể phân tích liên kết bình luận. Hãy kiểm tra và sao chép thủ công URL sau:',
+    'Tidak dapat mengurai tautan komentar. Silakan periksa dan salin manual URL berikut:'
   ],
   ADMIN_CONFIG: [
     '配置管理',
@@ -298,7 +336,9 @@ export default {
     'Configuration',
     'Конфигурация',
     '設定管理',
-    '환경설정'
+    '환경설정',
+    'Quản lý cấu hình',
+    'Manajemen Konfigurasi'
   ],
   [S.ACC + '_COMMON']: [
     '通用',
@@ -307,7 +347,9 @@ export default {
     'General',
     'Умумий',
     '一般',
-    '일반'
+    '일반',
+    'Chung',
+    'Umum'
   ],
   [S.ACC + '_IM']: [
     '即时通知',
@@ -316,7 +358,9 @@ export default {
     'Instant notification',
     'Тезкор хабарнома',
     '即時通知',
-    '실시간 알림'
+    '실시간 알림',
+    'Thông báo tức thì',
+    'Notifikasi Instan'
   ],
   [S.ACC + '_MAIL']: [
     '邮件通知',
@@ -325,7 +369,9 @@ export default {
     'Email notification',
     'Электрон почта хабарномаси',
     'メール通知',
-    '이메일 알림'
+    '이메일 알림',
+    'Thông báo email',
+    'Notifikasi Email'
   ],
   [S.ACC + '_PLUGIN']: [
     '插件',
@@ -334,7 +380,9 @@ export default {
     'Plugin',
     'Плагин',
     'プラグイン',
-    '플러그인'
+    '플러그인',
+    'Plugin',
+    'Plugin'
   ],
   [S.ACC + '_PRIVACY']: [
     '隐私',
@@ -343,7 +391,9 @@ export default {
     'Privacy',
     'Шахсий қоидалар',
     'プライバシー',
-    '개인정보'
+    '개인정보',
+    'Quyền riêng tư',
+    'Privasi'
   ],
   [S.ACC + '_SPAM']: [
     '反垃圾',
@@ -352,12 +402,16 @@ export default {
     'Spam',
     'Спам',
     'スパム対策',
-    '스팸 관리'
+    '스팸 관리',
+    'Chống spam',
+    'Anti-spam'
   ],
   [S.ACC + '_CAPTCHA']: [
     '人机验证',
     '人機驗證',
     '人機驗證',
+    'CAPTCHA',
+    'CAPTCHA',
     'CAPTCHA',
     'CAPTCHA',
     'CAPTCHA',
@@ -370,7 +424,9 @@ export default {
     'None (disable image upload)',
     'Йўқ (расм юклашни ўчириш)',
     'なし（画像アップロードを無効にする）',
-    '없음 (이미지 업로드 비활성화)'
+    '없음 (이미지 업로드 비활성화)',
+    'Không (tắt tải ảnh)',
+    'Tidak Ada (nonaktifkan unggahan gambar)'
   ],
   ADMIN_CONFIG_CAPTCHA_NONE: [
     '无',
@@ -379,9 +435,12 @@ export default {
     'None',
     'Йўқ',
     'なし',
-    '없음'
+    '없음',
+    'Không',
+    'Tidak Ada'
   ],
   ADMIN_CONFIG_CAPTCHA_TURNSTILE: [
+    'Cloudflare Turnstile',
     'Cloudflare Turnstile',
     'Cloudflare Turnstile',
     'Cloudflare Turnstile',
@@ -397,9 +456,11 @@ export default {
     'GeeTest',
     'GeeTest',
     'GeeTest',
+    'GeeTest',
     'GeeTest'
   ],
   ADMIN_CONFIG_CAPTCHA_CAP: [
+    'Cap',
     'Cap',
     'Cap',
     'Cap',
@@ -415,7 +476,9 @@ export default {
     'Email notification test',
     'Электрон почта хабарномаси тести',
     'メール通知テスト',
-    '이메일 알림 테스트'
+    '이메일 알림 테스트',
+    'Kiểm tra thông báo email',
+    'Tes notifikasi email'
   ],
   ADMIN_CONFIG_EMAIL_TEST_BTN: [
     '发送测试邮件',
@@ -424,7 +487,9 @@ export default {
     'Send test mail',
     'Синов хатини юбориш',
     'テストメールを送信',
-    '테스트 메일 발송'
+    '테스트 메일 발송',
+    'Gửi email thử',
+    'Kirim email tes'
   ],
   ADMIN_CONFIG_EMAIL_TEST_HELP: [
     '输入一个邮箱地址，发送测试邮件',
@@ -433,7 +498,9 @@ export default {
     'Input an email address & send test mail',
     'Э-почта манзилини киритинг ва синов хатини юборинг',
     'メールアドレスを入力してテストメールを送信',
-    '이메일 주소를 입력하고 테스트 메일을 발송하세요'
+    '이메일 주소를 입력하고 테스트 메일을 발송하세요',
+    'Nhập địa chỉ email và gửi email thử',
+    'Masukkan alamat email dan kirim email tes'
   ],
   ADMIN_CONFIG_EMAIL_TEST_RESULT: [
     '测试结果：',
@@ -442,7 +509,9 @@ export default {
     'Test result: ',
     'Тест натижаси: ',
     'テスト結果：',
-    '테스트 결과: '
+    '테스트 결과: ',
+    'Kết quả kiểm tra: ',
+    'Hasil tes: '
   ],
   ADMIN_CONFIG_EXAMPLE: [
     '示例：',
@@ -451,7 +520,9 @@ export default {
     'Example: ',
     'Намуна: ',
     '例：',
-    '예시: '
+    '예시: ',
+    'Ví dụ: ',
+    'Contoh: '
   ],
   [S.ACI + '_AKISMET_KEY']: [
     'Akismet 反垃圾评论，用于垃圾评论检测，设为 "MANUAL_REVIEW" 开启人工审核，留空不使用反垃圾。注册：https://akismet.com',
@@ -460,7 +531,9 @@ export default {
     'Akismet spam protection. Set to "MANUAL_REVIEW" to enable manual review. Leave it blank to not use anti-spam. Register Akismet: https://akismet.com',
     'Акисмет спам ҳимояси. Қўлда кўриб чиқишни ёқиш учун "MANUAL_REVIEW" га созланг. Анти-спамдан фойдаланмаслик учун уни бўш қолдиринг. Акисметни рўйхатдан ўтказиш: https://akismet.com',
     'Akismetは、スパムコメントの検出に使用されるアンチスパムサービスです。"MANUAL_REVIEW"に設定することで、手動レビューを有効化します。コメントのスパム対策にAkismetを使用することで、不要なコメントをブロックし、サイトのセキュリティを向上させることができます。 Akismetの詳細情報と登録は、https://akismet.com で提供されています。',
-    'Akismet 스팸 방지. 스팸 댓글 감지에 사용합니다. "MANUAL_REVIEW"를 설정하면 수동 검토를 활성화합니다. 비워두면 스팸 수동 검토를 사용하지 않습니다. Akismet 등록: https://akismet.com'
+    'Akismet 스팸 방지. 스팸 댓글 감지에 사용합니다. "MANUAL_REVIEW"를 설정하면 수동 검토를 활성화합니다. 비워두면 스팸 수동 검토를 사용하지 않습니다. Akismet 등록: https://akismet.com',
+    'Bảo vệ spam Akismet. Đặt thành "MANUAL_REVIEW" để bật kiểm duyệt thủ công. Để trống nếu không dùng chống spam. Đăng ký: https://akismet.com',
+    'Perlindungan spam Akismet. Atur ke "MANUAL_REVIEW" untuk mengaktifkan peninjauan manual. Biarkan kosong jika tidak menggunakan anti-spam. Daftar Akismet: https://akismet.com'
   ],
   [S.ACI + '_BLOGGER_NICK']: [
     '博主的昵称。',
@@ -469,7 +542,9 @@ export default {
     'Admin nick name.',
     'Админ исми.',
     '管理者の名前。',
-    '관리자 닉네임.'
+    '관리자 닉네임.',
+    'Tên hiển thị của quản trị viên.',
+    'Nama panggilan admin.'
   ],
   [S.ACI + '_BLOGGER_EMAIL']: [
     '博主的邮箱地址，用于邮件通知、博主标识。',
@@ -478,7 +553,9 @@ export default {
     'Admin Email address. Used for Email notification and admin identification.',
     'Админ электрон почта манзили. Электрон почта хабарномаси ва администратор идентификацияси учун фойдаланилади.',
     '管理者のメールアドレス。メール通知と管理者の識別に使用されます。',
-    '관리자 이메일 주소. 이메일 알림 및 관리자 식별에 사용됩니다.'
+    '관리자 이메일 주소. 이메일 알림 및 관리자 식별에 사용됩니다.',
+    'Địa chỉ email quản trị viên. Dùng cho thông báo email và nhận diện admin.',
+    'Alamat email admin. Digunakan untuk notifikasi email dan identifikasi admin.'
   ],
   [S.ACI + '_COMMENT_BG_IMG']: [
     '评论框自定义背景图片 URL 地址。',
@@ -487,7 +564,9 @@ export default {
     'URL for custom background image.',
     'Махсус фон расми учун УРЛ.',
     'コメントボックスのカスタム背景画像のURL。',
-    '댓글창 배경 이미지 URL 주소.'
+    '댓글창 배경 이미지 URL 주소.',
+    'URL ảnh nền tùy chỉnh cho khung bình luận.',
+    'URL untuk gambar latar belakang kustom.'
   ],
   [S.ACI + '_COMMENT_PAGE_SIZE']: [
     '评论列表分页大小，默认为 8。',
@@ -496,7 +575,9 @@ export default {
     'Comment page size. Default: 8.',
     'Изоҳ саҳифаси ўлчами. Стандарт: 8.',
     'コメントリストのページサイズ。デフォルトは8。',
-    '한 페이지당 표시 댓글 수. 기본값: 8.'
+    '한 페이지당 표시 댓글 수. 기본값: 8.',
+    'Số bình luận mỗi trang. Mặc định: 8.',
+    'Jumlah komentar per halaman. Bawaan: 8.'
   ],
   [S.ACI + '_COMMENT_PLACEHOLDER']: [
     '评论框提示信息，可用<br>换行，默认为空',
@@ -505,7 +586,9 @@ export default {
     'Comment placeholder. Use <br> to start a newline. Default: empty.',
     'Изоҳ тўлдирувчиси. Янги қаторни бошлаш учун <бр> дан фойдаланинг. Стандарт: бўш.',
     'コメントボックスのヒントメッセージ。<br>で改行。デフォルトは空。',
-    '댓글 입력창에 표시될 기본 문구. <br> 태그로 줄바꿈 가능. 기본값: 비어 있음.'
+    '댓글 입력창에 표시될 기본 문구. <br> 태그로 줄바꿈 가능. 기본값: 비어 있음.',
+    'Văn bản gợi ý trong khung bình luận. Dùng <br> để xuống dòng. Mặc định: trống.',
+    'Placeholder komentar. Gunakan <br> untuk baris baru. Bawaan: kosong.'
   ],
   [S.ACI + '_CORS_ALLOW_ORIGIN']: [
     'CORS 安全域名，注意：如果您不了解什么是 CORS，此项请留空，错误设置会导致无法加载，默认为空，格式为 https://blog.example.com；如需添加多域名请使用,分隔',
@@ -514,7 +597,9 @@ export default {
     'CORS allow origin, note: incorrect settings can cause loading failure. Default: blank, format: https://blog.example.com; If you need to add multiple domain names, please use, separate',
     'Версел СОРС келиб чиқишига рухсат беради, эътибор беринг: нотўғри созламалар юклашда хатоликка олиб келиши мумкин. Стандарт: бўш, формат: https://blog.example.com; Агар сиз бир нечта домен номларини қўшмоқчи бўлсангиз, илтимос, ажратишдан фойдаланинг.',
     'CORS セキュアドメイン。注意：誤った設定は読み込みエラーを引き起こす可能性があります。デフォルトは空、形式は https://blog.example.com です。複数のドメインを追加する場合は、コンマで区切ってください。',
-    '댓글 서버 접근 허용 웹사이트 주소. 참고: 등록된 웹사이트만 댓글 시스템과 안전하게 통신합니다. 주소 오류 시 댓글창이 사라질 수 있습니다. 기본값: 비어 있음(보안 취약), 형식: https://blog.example.com; 여러 주소는 쉼표(,)로 구분.'
+    '댓글 서버 접근 허용 웹사이트 주소. 참고: 등록된 웹사이트만 댓글 시스템과 안전하게 통신합니다. 주소 오류 시 댓글창이 사라질 수 있습니다. 기본값: 비어 있음(보안 취약), 형식: https://blog.example.com; 여러 주소는 쉼표(,)로 구분.',
+    'Tên miền cho phép CORS. Lưu ý: cấu hình sai có thể gây lỗi tải. Mặc định: trống. Định dạng: https://blog.example.com; Nhiều tên miền dùng dấu phẩy.',
+    'Asal izin CORS, catatan: pengaturan yang salah dapat menyebabkan kegagalan memuat. Bawaan: kosong, format: https://blog.example.com; Jika perlu menambahkan beberapa nama domain, pisahkan dengan koma.'
   ],
   [S.ACI + '_DEFAULT_GRAVATAR']: [
     `默认的头像显示。默认值（留空）为 "initials"，可选：${defaultGravatar.join('、')}`,
@@ -523,7 +608,9 @@ export default {
     `Avatar placeholder. Default (when empty): "initials". Choose from: ${defaultGravatar.join(', ')}`,
     `Аватар тўлдирувчиси. Стандарт (агар бўш қолдирилса): «идентификатор». Қуйидагилардан танланг: ${defaultGravatar.join(', ')}`,
     `デフォルトのプロフィール画像表示。デフォルト（空欄時）は "initials" で、選択肢は：${defaultGravatar.join('、')} です`,
-    `프로필 기본 이미지. 기본값(비워둘 경우): "initials". 사용 가능 스타일: ${defaultGravatar.join(', ')}`
+    `프로필 기본 이미지. 기본값(비워둘 경우): "initials". 사용 가능 스타일: ${defaultGravatar.join(', ')}`,
+    `Ảnh đại diện mặc định. Mặc định (để trống): "initials". : ${defaultGravatar.join(', ')}`,
+    `Tampilan avatar default. Bawaan (bila kosong): "initials". Pilih dari: ${defaultGravatar.join(', ')}`
   ],
   [S.ACI + '_EMOTION_CDN']: [
     '表情 CDN，英文逗号分隔。默认为：https://owo.imaegoo.com/owo.json',
@@ -532,7 +619,9 @@ export default {
     'Emoji CDN. Separate by comma. Default: https://owo.imaegoo.com/owo.json',
     'Emoji CDN. Вергул билан ажратинг. Default: https://owo.imaegoo.com/owo.json',
     '顔文字CDN。コンマで区切ってください。デフォルト：https://owo.imaegoo.com/owo.json',
-    '이모티콘 데이터 웹 주소. 쉼표(,)로 구분. 기본값: https://owo.imaegoo.com/owo.json'
+    '이모티콘 데이터 웹 주소. 쉼표(,)로 구분. 기본값: https://owo.imaegoo.com/owo.json',
+    'CDN emoji, cách nhau bởi dấu phẩy. Mặc định: https://owo.imaegoo.com/owo.json',
+    'CDN Emoji, pisahkan dengan koma. Bawaan: https://owo.imaegoo.com/owo.json'
   ],
   [S.ACI + '_FORBIDDEN_WORDS']: [
     '违禁词配置，包含违禁词的内容会直接标记为垃圾评论。英文逗号分隔。',
@@ -541,7 +630,9 @@ export default {
     'Configure prohibited words. Comments containing prohibited words will be auto spammed. Separate by comma.',
     'Тақиқланган сўзларни созланг. Тақиқланган сўзларни ўз ичига олган шарҳлар автоматик равишда спамга юборилади. Вергул билан ажратинг.',
     '禁止ワード設定。禁止ワードを含むコンテンツは直ちにスパムコメントとしてマークされます。コンマで区切ってください。',
-    '금지어 설정. 금지어 포함 댓글은 스팸으로 숨김 처리 됩니다. 쉼표로 구분.'
+    '금지어 설정. 금지어 포함 댓글은 스팸으로 숨김 처리 됩니다. 쉼표로 구분.',
+    'Cấu hình từ bị cấm. Bình luận chứa từ bị cấm sẽ bị đánh dấu spam. Cách nhau bởi dấu phẩy.',
+    'Konfigurasi kata terlarang. Komentar yang mengandung kata terlarang akan otomatis ditandai spam. Pisahkan dengan koma.'
   ],
   [S.ACI + '_BLOCKED_WORDS']: [
     '屏蔽词配置，包含屏蔽词的内容会直接评论失败。英文逗号分隔。',
@@ -550,7 +641,9 @@ export default {
     'Configure blocked words. Comments containing blocked words will fail to send. Separate by comma.',
     'Configure blocked words. Comments containing blocked words will fail to send. Separate by comma.',
     'ブロックワード設定。ブロックワードを含むコンテンツは送信に失敗します。コンマで区切ってください。',
-    '차단어 설정. 차단어 포함 댓글은 등록에 실패합니다. 쉼표로 구분.'
+    '차단어 설정. 차단어 포함 댓글은 등록에 실패합니다. 쉼표로 구분.',
+    'Cấu hình từ bị chặn. Bình luận chứa từ bị chặn sẽ không được gửi. Cách nhau bởi dấu phẩy.',
+    'Konfigurasi kata diblokir. Komentar yang mengandung kata diblokir akan gagal dikirim. Pisahkan dengan koma.'
   ],
   [S.ACI + '_GRAVATAR_CDN']: [
     '自定义头像 CDN 地址。如：cn.gravatar.com, weavatar.com, cravatar.cn, sdn.geekzu.org, gravatar.loli.net，默认：weavatar.com',
@@ -559,7 +652,9 @@ export default {
     'Custom avator CDN. (Examples: gravatar.com) Default: weavatar.com.',
     'Custom avator CDN. (Мисоллар: gravatar.com) Default: weavatar.com.',
     'カスタムプロフィール画像CDNアドレス。例：cn.gravatar.com、weavatar.com、cravatar.cn、sdn.geekzu.org、gravatar.loli.net、デフォルト：weavatar.com',
-    '프로필 이미지(아바타) Gravatar 서버 주소. 더 빠르거나 안정적인 서버를 선택할 수 있습니다. (예: gravatar.com) 기본값: weavatar.com.'
+    '프로필 이미지(아바타) Gravatar 서버 주소. 더 빠르거나 안정적인 서버를 선택할 수 있습니다. (예: gravatar.com) 기본값: weavatar.com.',
+    'CDN ảnh đại diện tùy chỉnh. (Ví dụ: gravatar.com) Mặc định: weavatar.com.',
+    'Alamat CDN avatar kustom. Contoh: cn.gravatar.com, weavatar.com, cravatar.cn, sdn.geekzu.org, gravatar.loli.net, bawaan: weavatar.com.'
   ],
   [S.ACI + '_HIDE_ADMIN_CRYPT']: [
     '隐藏管理面板入口。可设置一个“暗号”，只有在“昵称”一栏输入相同的“暗号”时，管理面板入口才会显示，留空则不隐藏管理入口',
@@ -568,16 +663,20 @@ export default {
     'Set a cipher to hide the management panel entrance, only when the same cipher is entered in the nickname field the management panel entry will be displayed. Leave it blank to not hide the management entrance.',
     'Бошқарув панелига киришни яшириш учун шифрни ўрнатинг, фақат тахаллус майдонига худди шу шифр киритилганда бошқарув панелидаги ёзув кўрсатилади. Бошқарув киришини яширмаслик учун уни бўш қолдиринг.',
     '管理パネルのログイン画面を非表示にする。 "パスワード" を設定でき、 "名前" フィールドに同じ "パスワード" を入力した場合のみ、管理パネルのログイン画面が表示されます。空白の場合、管理パネルのログイン画面は非表示にされません。',
-    '환경설정 버튼을 숨깁니다. 암호를 설정하여, 닉네임 입력란에 동일한 암호를 입력해야만 환경설정 버튼이 표시됩니다. 비워두면 버튼을 숨기지 않습니다.'
+    '환경설정 버튼을 숨깁니다. 암호를 설정하여, 닉네임 입력란에 동일한 암호를 입력해야만 환경설정 버튼이 표시됩니다. 비워두면 버튼을 숨기지 않습니다.',
+    'Đặt mật khẩu bí mật để ẩn nút vào trang quản trị. Chỉ khi nhập đúng mật khẩu vào ô "Tên" mới hiện nút. Để trống để không ẩn.',
+    'Sembunyikan tombol panel manajemen. Atur kata sandi, hanya ketika kata sandi yang sama dimasukkan di kolom nama, tombol akan muncul. Kosongkan untuk tidak menyembunyikan.'
   ],
   [S.ACI + '_QQ_API_KEY']: [
-    'QQ昵称API密钥，用于获取QQ昵称。前往 https://api.nsuuu.com/admin/key 获取',
-    'QQ暱稱API密鑰，用於獲取QQ暱稱。前往 https://api.nsuuu.com/admin/key 獲取',
-    'QQ暱稱API密鑰，用於獲取QQ暱稱。前往 https://api.nsuuu.com/admin/key 獲取',
+    'QQ昵称API密钥，用于获取QQ昵称。前往 https://api.tqq.me/dashboard/api-keys 获取',
+    'QQ暱稱API密鑰，用於獲取QQ暱稱。前往 https://api.tqq.me/dashboard/api-keys 獲取',
+    'QQ暱稱API密鑰，用於獲取QQ暱稱。前往 https://api.tqq.me/dashboard/api-keys 獲取',
     'QQ nickname API key for fetching QQ nickname. Get it from https://api.nsuuu.com/admin/key',
-    'QQ laqab API kaliti, QQ laqabni olish uchun. https://api.nsuuu.com/admin/key dan oling',
-    'QQニックネームAPIキー。QQニックネームの取得に使用します。https://api.nsuuu.com/admin/key で取得',
-    'QQ 닉네임 API 키. https://api.nsuuu.com/admin/key 에서 발급'
+    'QQ laqab API kaliti, QQ laqabni olish uchun. https://api.tqq.me/dashboard/api-keys dan oling',
+    'QQニックネームAPIキー。QQニックネームの取得に使用します。https://api.tqq.me/dashboard/api-keys で取得',
+    'QQ 닉네임 API 키. https://api.tqq.me/dashboard/api-keys 에서 발급',
+    'API key lấy biệt danh QQ. Lấy tại https://api.tqq.me/dashboard/api-keys',
+    'Kunci API nama panggilan QQ. Dapatkan dari https://api.tqq.me/dashboard/api-keys'
   ],
   [S.ACI + '_HIGHLIGHT']: [
     '启用代码高亮功能。如果您的主题和代码高亮有冲突，请设为 false。默认：true',
@@ -586,7 +685,9 @@ export default {
     'Enable code highlighting. If your theme conflicts with code highlighting, please set it to false. Default: true.',
     'Кодни ажратиб кўрсатишни ёқинг. Агар мавзуингиз кодни ажратиб кўрсатишга зид бўлса, уни «фалсе» га ўрнатинг. Стандарт: рост.',
     'コードハイライト機能を有効にします。テーマとコードハイライトに競合がある場合、falseに設定してください。デフォルト：true',
-    '코드 하이라이팅 기능을 활성화합니다. 테마와 코드 하이라이팅이 충돌하면 false로 설정하세요. 기본값: true.'
+    '코드 하이라이팅 기능을 활성화합니다. 테마와 코드 하이라이팅이 충돌하면 false로 설정하세요. 기본값: true.',
+    'Bật tô sáng code. Nếu theme xung đột, đặt thành false. Mặc định: true.',
+    'Aktifkan penyorotan kode. Jika tema Anda bertentangan dengan penyorotan kode, atur ke false. Bawaan: true.'
   ],
   [S.ACI + '_HIGHLIGHT_THEME']: [
     `代码高亮主题，可选：${highlightThemes.join('、')}，访问 https://prismjs.com 可预览主题效果。如果您的主题和代码高亮有冲突，请设为 none。默认：none`,
@@ -595,7 +696,9 @@ export default {
     `Code highlighting theme. Select from: ${highlightThemes.join(', ')}. Visit https://prismjs.com for preview. If your theme conflicts with code highlighting, please set it to none. Default: none.`,
     `Кодни таъкидлаш мавзуси. Қуйидагилардан танланг: ${highlightThemes.join(', ')}. Олдиндан кўриш учун https://prismjs.com сайтига ташриф буюринг. Агар мавзуингиз кодни ажратиб кўрсатишга зид бўлса, уни «Ҳеч» га ўрнатинг. Стандарт: йўқ.`,
     `コードハイライトのテーマ。選択肢：${highlightThemes.join('、')}、テーマの効果をプレビューするには https://prismjs.com を訪問してください。テーマとコードハイライトに競合がある場合、noneに設定してください。デフォルト：none`,
-    `코드 하이라이팅 테마. 사용 가능 테마: ${highlightThemes.join(', ')}. https://prismjs.com 에서 미리보기를 확인하세요. 테마와 코드 하이라이팅이 충돌하면 none으로 설정하세요. 기본값: none.`
+    `코드 하이라이팅 테마. 사용 가능 테마: ${highlightThemes.join(', ')}. https://prismjs.com 에서 미리보기를 확인하세요. 테마와 코드 하이라이팅이 충돌하면 none으로 설정하세요. 기본값: none.`,
+    `Theme tô sáng code. Truy cập ${highlightThemes.join(', ')}. https://prismjs.com để xem trước. Mặc định: none.`,
+    `Tema penyorotan kode. Pilih dari: ${highlightThemes.join(', ')}. Kunjungi https://prismjs.com untuk pratinjau. Jika tema Anda bertentangan dengan penyorotan kode, atur ke none. Bawaan: none.`
   ],
   [S.ACI + '_HIGHLIGHT_PLUGIN']: [
     `代码高亮插件，可选：${highlightPlugins.join('、')}，分别表示：展示代码语言、展示代码拷贝按钮。可以同时设置多个选项，如果想要不添加任何代码高亮插件，请设为 none。默认：none。`,
@@ -604,7 +707,9 @@ export default {
     `Code highlight plug-in, optional: ${highlightPlugins.join(', ')}, respectively: show code language, show code copy button. Multiple options can be set at the same time, if you want to add no code highlighting plug-ins, please set it to none. Default: none. `,
     `Плагин подсветки кода, опционально: ${highlightPlugins.join(',')}, соответственно: показывать язык кода, показывать кнопку копирования кода. Вы можете установить несколько опций одновременно, если вы хотите не добавлять плагин подсветки кода, установите значение none. по умолчанию: none.`,
     `コード・ハイライト・プラグイン。オプション: ${highlightPlugins.join(',')}, それぞれ: コード言語の表示、コード・コピー・ボタンの表示。複数のオプションを同時に設定できますが、コード・ハイライト・プラグインを追加したくない場合は、noneに設定してください。`,
-    `코드 하이라이트 추가 기능. 선택 가능: ${highlightPlugins.join(', ')}. (코드 언어 표시, 복사 버튼) 여러 기능을 동시에 설정할 수 있으며, 추가하지 않으려면 none으로 설정하세요. 기본값: none.`
+    `코드 하이라이트 추가 기능. 선택 가능: ${highlightPlugins.join(', ')}. (코드 언어 표시, 복사 버튼) 여러 기능을 동시에 설정할 수 있으며, 추가하지 않으려면 none으로 설정하세요. 기본값: none.`,
+    `Plugin tô sáng code. Để không dùng plugin ${highlightPlugins.join(', ')}, đặt thành none. Mặc định: none.`,
+    `Plugin penyorotan kode. Pilihan: ${highlightPlugins.join(', ')}, masing-masing: tampilkan bahasa kode, tampilkan tombol salin kode. Dapat mengatur beberapa opsi sekaligus. Jika tidak ingin plugin penyorotan kode, atur ke none. Bawaan: none.`
   ],
   [S.ACI + '_IMAGE_CDN']: [
     `插入图片所使用的图床，目前支持：${imageBedServices.join('、')}`,
@@ -613,7 +718,9 @@ export default {
     `The image bed for image uploading. Select from: ${imageBedServices.join(', ')}`,
     `Расм юклаш учун расм тўшаги. Қуйидагилардан танланг: ${imageBedServices.join(', ')}`,
     `画像のアップロードに使用する画像ホスティングサービス。次のうちから選択してください：${imageBedServices.join('、')}`,
-    `댓글 이미지 업로드 기능에 사용될 호스팅 서비스. 사용 가능 목록: ${imageBedServices.join(', ')}`
+    `댓글 이미지 업로드 기능에 사용될 호스팅 서비스. 사용 가능 목록: ${imageBedServices.join(', ')}`,
+    `Dịch vụ lưu trữ ảnh khi tải lên bình luận. ${imageBedServices.join(', ')}`,
+    `Penyedia hosting gambar untuk unggahan gambar. Pilih dari: ${imageBedServices.join(', ')}`
   ],
   // 翻译来自 Deepseek
   [S.ACI + '_IMAGE_CDN_URL']: [
@@ -623,7 +730,9 @@ export default {
     `The URL for the image bed. Required if your IMAGE_CDN is one of these: ${customImageBedServices.join(', ')}`, // 英文
     `IMAGE_CDN томонидан белгиланган расм тўшаги URL. Агар сизнинг IMAGE_CDN шулардан бири бўлса: ${customImageBedServices.join(', ')}`, // 乌兹别克语
     `IMAGE_CDNで設定した画像ホスティングサービスのURL。IMAGE_CDNが以下のいずれかの場合は入力が必要です：${customImageBedServices.join('、')}`, // 日语
-    '이미지 저장소 URL. IMAGE_CDN 설정이 다음 중 하나인 경우 필요합니다: ${customImageBedServices.join(', ')}'
+    `이미지 저장소 URL. IMAGE_CDN 설정이 다음 중 하나인 경우 필요합니다: ${customImageBedServices.join(', ')}`,
+    `URL của dịch vụ lưu trữ ảnh. Bắt buộc nếu IMAGE_CDN là một trong các giá trị tùy chỉnh. ${customImageBedServices.join(', ')}`,
+    `URL hosting gambar. Wajib diisi jika IMAGE_CDN Anda adalah salah satu dari: ${customImageBedServices.join(', ')}`
   ],
   [S.ACI + '_IMAGE_CDN_TOKEN']: [
     '图床 token。qcloud 图床无需设置',
@@ -632,16 +741,20 @@ export default {
     'The image bed token. Unnessessary for qcloud',
     'Тасвир токен белгиси. Қслоуд учун кераксиз',
     '画像ホスティングトークン。qcloud画像ホスティングを利用する場合は設定の必要はありません',
-    '이미지 호스팅 토큰. qcloud은 설정 불필요.'
+    '이미지 호스팅 토큰. qcloud은 설정 불필요.',
+    'Token dịch vụ lưu trữ ảnh. Không cần thiết cho qcloud.',
+    'Token hosting gambar. Tidak diperlukan untuk qcloud.'
   ],
   [S.ACI + '_NSFW_API_URL']: [
-    'NSFW 图片检测 API 地址。免费服务：nsfw.xnet.ren、nsfw.qixz.cn，项目：github.com/HG-ha/nsfwpy',
-    'NSFW 圖片檢測 API 地址。免費服務：nsfw.xnet.ren、nsfw.qixz.cn，項目：github.com/HG-ha/nsfwpy',
-    'NSFW 圖片檢測 API 地址。免費服務：nsfw.xnet.ren、nsfw.qixz.cn，項目：github.com/HG-ha/nsfwpy',
-    'NSFW image detection API URL. Free services: nsfw.xnet.ren, nsfw.qixz.cn, project: github.com/HG-ha/nsfwpy',
-    'NSFW расмни аниқлаш API URL. Бепул хизматлар: nsfw.xnet.ren, nsfw.qixz.cn, лойиҳа: github.com/HG-ha/nsfwpy',
-    'NSFW画像検出API URL。無料サービス：nsfw.xnet.ren、nsfw.qixz.cn、プロジェクト：github.com/HG-ha/nsfwpy',
-    'NSFW 이미지 감지 API URL. 무료 서비스: nsfw.xnet.ren, nsfw.qixz.cn, 프로젝트: github.com/HG-ha/nsfwpy'
+    'NSFW 图片检测 API 地址。免费服务：nsfw.qixz.cn，项目：github.com/HG-ha/nsfwpy',
+    'NSFW 圖片檢測 API 地址。免費服務：nsfw.qixz.cn，項目：github.com/HG-ha/nsfwpy',
+    'NSFW 圖片檢測 API 地址。免費服務：nsfw.qixz.cn，項目：github.com/HG-ha/nsfwpy',
+    'NSFW image detection API URL. Free services: nsfw.qixz.cn, project: github.com/HG-ha/nsfwpy',
+    'NSFW расмни аниқлаш API URL. Бепул хизматлар: nsfw.qixz.cn, лойиҳа: github.com/HG-ha/nsfwpy',
+    'NSFW画像検出API URL。無料サービス：nsfw.qixz.cn、プロジェクト：github.com/HG-ha/nsfwpy',
+    'NSFW 이미지 감지 API URL. 무료 서비스: nsfw.qixz.cn, 프로젝트: github.com/HG-ha/nsfwpy',
+    'URL API phát hiện ảnh NSFW. Dịch vụ miễn phí: nsfw.qixz.cn, dự án: github.com/HG-ha/nsfwpy',
+    'URL API deteksi gambar NSFW. Layanan gratis: nsfw.qixz.cn, proyek: github.com/HG-ha/nsfwpy'
   ],
   [S.ACI + '_NSFW_THRESHOLD']: [
     'NSFW 检测阈值（0-1），当检测分数高于此值时拒绝上传。默认：0.5',
@@ -650,7 +763,9 @@ export default {
     'NSFW detection threshold (0-1). Upload will be rejected if score exceeds this value. Default: 0.5',
     'NSFW аниқлаш чегараси (0-1). Баҳо бу қийматдан ошса юклаш рад қилинади. Стандарт: 0.5',
     'NSFW検出しきい値（0-1）。スコアがこの値を超えるとアップロードが拒否されます。デフォルト：0.5',
-    'NSFW 감지 임계값 (0-1). 점수가 이 값을 초과하면 업로드가 거부됩니다. 기본값: 0.5'
+    'NSFW 감지 임계값 (0-1). 점수가 이 값을 초과하면 업로드가 거부됩니다. 기본값: 0.5',
+    'Ngưỡng phát hiện NSFW (0-1). Tải lên bị từ chối nếu điểm vượt ngưỡng. Mặc định: 0.5',
+    'Ambang deteksi NSFW (0-1). Unggahan akan ditolak jika skor melebihi nilai ini. Bawaan: 0.5'
   ],
   [S.ACI + '_S3_REGION']: [
     'S3 存储区域，例如 us-east-1。使用兼容 S3 的服务（如 Cloudflare R2、MinIO）时可填任意值',
@@ -659,7 +774,9 @@ export default {
     'S3 region, e.g. us-east-1. Can be any value when using S3-compatible services (e.g. Cloudflare R2, MinIO)',
     'S3 минтақаси, масалан us-east-1. S3 мос хизматлар учун (Cloudflare R2, MinIO) ихтиёрий қийматни киритиш мумкин',
     'S3リージョン（例：us-east-1）。Cloudflare R2やMinIOなどのS3互換サービスを使用する場合は任意の値を入力できます',
-    'S3 리전 (예: us-east-1). Cloudflare R2, MinIO 등 S3 호환 서비스 사용 시 임의 값 입력 가능'
+    'S3 리전 (예: us-east-1). Cloudflare R2, MinIO 등 S3 호환 서비스 사용 시 임의 값 입력 가능',
+    'Vùng S3, ví dụ us-east-1. Có thể nhập giá trị bất kỳ khi dùng dịch vụ tương thích S3 (Cloudflare R2, MinIO)',
+    'Region S3, misal us-east-1. Bisa diisi nilai apa saja saat menggunakan layanan yang kompatibel dengan S3 (misal Cloudflare R2, MinIO)'
   ],
   [S.ACI + '_S3_BUCKET']: [
     'S3 存储桶名称',
@@ -668,9 +785,12 @@ export default {
     'S3 bucket name',
     'S3 bucket nomi',
     'S3バケット名',
-    'S3 버킷 이름'
+    'S3 버킷 이름',
+    'Tên S3 bucket',
+    'Nama S3 bucket'
   ],
   [S.ACI + '_S3_ACCESS_KEY_ID']: [
+    'S3 Access Key ID',
     'S3 Access Key ID',
     'S3 Access Key ID',
     'S3 Access Key ID',
@@ -686,6 +806,7 @@ export default {
     'S3 Secret Access Key',
     'S3 Secret Access Key',
     'S3 Secret Access Key',
+    'S3 Secret Access Key',
     'S3 Secret Access Key'
   ],
   [S.ACI + '_S3_ENDPOINT']: [
@@ -695,7 +816,20 @@ export default {
     'S3 custom endpoint. Required when using S3-compatible services like Cloudflare R2 or MinIO',
     'S3 maxsus endpoint. Cloudflare R2 yoki MinIO kabi S3 mos xizmatlardan foydalanishda talab qilinadi',
     'S3カスタムエンドポイント。Cloudflare R2やMinIOなどのS3互換サービスを使用する場合に必要です',
-    'S3 커스텀 엔드포인트. Cloudflare R2, MinIO 등 S3 호환 서비스 사용 시 필요'
+    'S3 커스텀 엔드포인트. Cloudflare R2, MinIO 등 S3 호환 서비스 사용 시 필요',
+    'Endpoint S3 tùy chỉnh. Bắt buộc khi dùng Cloudflare R2 hoặc MinIO',
+    'Endpoint S3 kustom. Wajib diisi jika menggunakan layanan yang kompatibel dengan S3 seperti Cloudflare R2 atau MinIO'
+  ],
+  [S.ACI + '_S3_FORCE_PATH_STYLE']: [
+    '设置 S3_ENDPOINT 时，是否将 S3_BUCKET 拼入上传地址路径。默认为 true，适用于 Cloudflare R2、MinIO 等 path-style S3 兼容端点；使用已绑定存储桶的自定义域名时设为 false，例如腾讯云 COS 自定义域名',
+    '設定 S3_ENDPOINT 時，是否將 S3_BUCKET 拼入上傳位址路徑。預設為 true，適用於 Cloudflare R2、MinIO 等 path-style S3 相容端點；使用已綁定儲存桶的自訂網域時設為 false，例如騰訊雲 COS 自訂網域',
+    '設定 S3_ENDPOINT 時，是否將 S3_BUCKET 加入上傳位址路徑。預設為 true，適用於 Cloudflare R2、MinIO 等 path-style S3 相容端點；使用已綁定儲存桶的自訂網域時設為 false，例如騰訊雲 COS 自訂網域',
+    'When S3_ENDPOINT is set, whether to append S3_BUCKET to the upload URL path. Default: true. Use true for Cloudflare R2, MinIO, and other path-style S3-compatible endpoints; set false for bucket-bound custom domains, such as Tencent Cloud COS custom domains.',
+    'S3_ENDPOINT sozlanganda S3_BUCKET ni yuklash URL yo\'liga qo\'shish-qo\'shmaslik. Standart: true. Cloudflare R2, MinIO va boshqa path-style S3 mos endpointlar uchun true ishlating; bucketga bog\'langan maxsus domenlar, masalan Tencent Cloud COS maxsus domenlari uchun false qiling.',
+    'S3_ENDPOINT 設定時、アップロード URL のパスに S3_BUCKET を追加するかどうか。デフォルト: true。Cloudflare R2、MinIO などの path-style S3 互換エンドポイントでは true を使用し、Tencent Cloud COS カスタムドメインなど、バケットに紐づくカスタムドメインでは false に設定します。',
+    'S3_ENDPOINT 설정 시 업로드 URL 경로에 S3_BUCKET을 추가할지 여부입니다. 기본값: true. Cloudflare R2, MinIO 등 path-style S3 호환 엔드포인트는 true를 사용하고, Tencent Cloud COS 커스텀 도메인처럼 버킷에 연결된 커스텀 도메인은 false로 설정하세요.',
+    'Khi đặt S3_ENDPOINT, xác định có thêm S3_BUCKET vào đường dẫn URL tải lên hay không. Mặc định: true. Dùng true cho Cloudflare R2, MinIO và endpoint tương thích S3 dạng path-style; đặt false cho tên miền tùy chỉnh đã gắn với bucket, ví dụ tên miền tùy chỉnh Tencent Cloud COS.',
+    'Saat S3_ENDPOINT diatur, apakah S3_BUCKET akan ditambahkan ke path URL unggahan. Bawaan: true. Gunakan true untuk Cloudflare R2, MinIO, dan endpoint kompatibel S3 path-style; atur false untuk domain kustom yang terikat bucket, misalnya domain kustom Tencent Cloud COS.'
   ],
   [S.ACI + '_S3_CDN_URL']: [
     'S3 图片访问域名（CDN 域名），留空则使用默认 S3/Endpoint URL',
@@ -704,7 +838,9 @@ export default {
     'S3 image access domain (CDN domain). Leave empty to use default S3/Endpoint URL',
     'S3 rasm kirish domeni (CDN domeni). Standart S3/Endpoint URL dan foydalanish uchun bo\'sh qoldiring',
     'S3画像アクセスドメイン（CDNドメイン）。空白の場合はデフォルトのS3/Endpoint URLを使用します',
-    'S3 이미지 접근 도메인 (CDN 도메인). 비워두면 기본 S3/Endpoint URL 사용'
+    'S3 이미지 접근 도메인 (CDN 도메인). 비워두면 기본 S3/Endpoint URL 사용',
+    'Tên miền CDN cho ảnh S3. Để trống để dùng URL S3/Endpoint mặc định',
+    'Domain akses gambar S3 (domain CDN). Kosongkan untuk menggunakan URL S3/Endpoint bawaan'
   ],
   [S.ACI + '_S3_PATH_PREFIX']: [
     'S3 图片存储路径前缀，例如 images/twikoo，留空则存储在根目录',
@@ -713,7 +849,9 @@ export default {
     'S3 image storage path prefix, e.g. images/twikoo. Leave empty to store in root',
     'S3 rasm saqlash yo\'l prefiksi, masalan images/twikoo. Ildizda saqlash uchun bo\'sh qoldiring',
     'S3画像保存パスプレフィックス（例：images/twikoo）。空白の場合はルートに保存されます',
-    'S3 이미지 저장 경로 접두사 (예: images/twikoo). 비워두면 루트에 저장'
+    'S3 이미지 저장 경로 접두사 (예: images/twikoo). 비워두면 루트에 저장',
+    'Tiền tố đường dẫn lưu trữ ảnh S3, ví dụ images/twikoo. Để trống để lưu ở thư mục gốc',
+    'Awalan path penyimpanan gambar S3, misal images/twikoo. Kosongkan untuk menyimpan di root'
   ],
   [S.ACI + '_LIGHTBOX']: [
     '使用简易图片点击放大效果。默认：false',
@@ -722,7 +860,9 @@ export default {
     'Use simple Lightbox effect. Default: false',
     'Используйте простые эффекты лайтбокса. По умолчанию: false',
     'シンプルな画像拡大機能を使用します。デフォルト：false',
-    '라이트박스 효과, 댓글 이미지 클릭 시 확대 효과 사용. 기본값: false'
+    '라이트박스 효과, 댓글 이미지 클릭 시 확대 효과 사용. 기본값: false',
+    'Bật hiệu ứng phóng to ảnh khi click. Mặc định: false',
+    'Gunakan efek Lightbox sederhana. Bawaan: false'
   ],
   [S.ACI + '_LIMIT_PER_MINUTE']: [
     '单个 IP 发言频率限制（条/10分钟），0 为无限制，默认：10',
@@ -731,7 +871,9 @@ export default {
     'How many comments can be posted by each IP every 10 minutes, 0 is unlimited, default: 10.',
     'Ҳар бир ИП ҳар 10 дақиқада қанча шарҳ қолдириши мумкин, 0 чексиз, стандарт: 10.',
     '同一IPにおける10分ごとの投稿回数制限。0は無制限、デフォルト：10',
-    'IP별 댓글 작성 빈도 제한 (10분당 건수), 0은 무제한. 기본값: 10.'
+    'IP별 댓글 작성 빈도 제한 (10분당 건수), 0은 무제한. 기본값: 10.',
+    'Giới hạn số bình luận mỗi IP trong 10 phút, 0 là không giới hạn. Mặc định: 10.',
+    'Batas komentar per IP setiap 10 menit, 0 tidak terbatas, bawaan: 10.'
   ],
   [S.ACI + '_LIMIT_PER_MINUTE_ALL']: [
     '全站发言频率限制（条/10分钟），0 为无限制，默认：10',
@@ -740,7 +882,9 @@ export default {
     'How many comments can be posted by all IPs every 10 minutes, 0 is unlimited, default: 10.',
     'Барча ИП-лар ҳар 10 дақиқада қанча шарҳ қўйиши мумкин, 0 чексиз, стандарт: 10.',
     '全IPにおける10分ごとの投稿回数制限。0は無制限、デフォルト：10',
-    '10분당 사이트 전체에 작성 가능한 총 댓글 수 제한. 0은 무제한. 기본값: 10.'
+    '10분당 사이트 전체에 작성 가능한 총 댓글 수 제한. 0은 무제한. 기본값: 10.',
+    'Giới hạn tổng số bình luận toàn site trong 10 phút, 0 là không giới hạn. Mặc định: 10.',
+    'Batas komentar seluruh situs setiap 10 menit, 0 tidak terbatas, bawaan: 10.'
   ],
   [S.ACI + '_LIMIT_LENGTH']: [
     '评论长度限制，0 为无限制，默认：500',
@@ -749,7 +893,9 @@ export default {
     'Comment length limitation, 0 is unlimited, default: 500.',
     'Шарҳ узунлиги чеклови, 0 чексиз, стандарт: 500.',
     'コメント長さの制限。0は無制限、デフォルト：500',
-    '댓글 길이 제한. 0은 무제한. 기본값: 500.'
+    '댓글 길이 제한. 0은 무제한. 기본값: 500.',
+    'Giới hạn độ dài bình luận, 0 là không giới hạn. Mặc định: 500.',
+    'Batas panjang komentar, 0 tidak terbatas, bawaan: 500.'
   ],
   [S.ACI + '_MAIL_SUBJECT']: [
     '自定义通知邮件主题，留空则使用默认主题。',
@@ -758,7 +904,9 @@ export default {
     'Custom Email notification subject. Leave it blank to use the default subject.',
     'Махсус электрон почта хабарномаси мавзуси. Стандарт мавзуни ишлатиш учун уни бўш қолдиринг.',
     'カスタム通知メールの件名。空白の場合はデフォルトの件名を使用します。',
-    '댓글 알림 이메일 제목 설정. 비워두면 기본 제목을 사용합니다.'
+    '댓글 알림 이메일 제목 설정. 비워두면 기본 제목을 사용합니다.',
+    'Tiêu đề email thông báo tùy chỉnh. Để trống để dùng tiêu đề mặc định.',
+    'Subjek notifikasi email kustom. Kosongkan untuk menggunakan subjek bawaan.'
   ],
   [S.ACI + '_MAIL_SUBJECT_ADMIN']: [
     '自定义博主通知邮件主题，留空则使用默认主题。',
@@ -767,7 +915,9 @@ export default {
     'Custom admin Email notification subject. Leave it blank to use the default subject.',
     'Махсус администратор электрон почта хабарномаси мавзуси. Стандарт мавзуни ишлатиш учун уни бўш қолдиринг.',
     '管理者へのカスタム通知メールの件名。空白の場合はデフォルトの件名を使用します。',
-    '관리자에게 발송되는 댓글 알림 이메일 제목 설정. 비워두면 기본 제목을 사용합니다.'
+    '관리자에게 발송되는 댓글 알림 이메일 제목 설정. 비워두면 기본 제목을 사용합니다.',
+    'Tiêu đề email thông báo cho quản trị viên tùy chỉnh. Để trống để dùng tiêu đề mặc định.',
+    'Subjek notifikasi email admin kustom. Kosongkan untuk menggunakan subjek bawaan.'
   ],
   [S.ACI + '_MAIL_TEMPLATE']: [
     '自定义通知邮件模板，留空则使用默认模板。可包含的字段：${SITE_URL}, ${SITE_NAME}, ${PARENT_NICK}, ${PARENT_COMMENT}, ${NICK}, ${COMMENT}, ${POST_URL}, ${IMG}, ${PARENT_IMG}',
@@ -776,7 +926,9 @@ export default {
     'Custom Email notification template. Leave it blank to use the default template. Fields that can be included: ${SITE_URL}, ${SITE_NAME}, ${NICK}, ${COMMENT}, ${POST_URL}, ${IMG}, ${PARENT_IMG}',
     'Махсус электрон почта хабарномаси шаблони. Стандарт шаблонни ишлатиш учун уни бўш қолдиринг. Қўшилиши мумкин бўлган майдонлар:  ${SITE_URL}, ${SITE_NAME}, ${NICK}, ${COMMENT}, ${POST_URL}, ${IMG}, ${PARENT_IMG}',
     'カスタム通知メールテンプレート。空白の場合はデフォルトテンプレートを使用します。使用可能なフィールド：${SITE_URL}、${SITE_NAME}、${PARENT_NICK}、${PARENT_COMMENT}、${NICK}、${COMMENT}、${POST_URL}、${IMG}、${PARENT_IMG}',
-    '댓글 알림 이메일 템플릿 설정. 비워두면 기본 템플릿 사용. 다음 변수를 사용하면 해당 값으로 자동 치환됩니다: ${SITE_URL}, ${SITE_NAME}, ${PARENT_NICK}, ${PARENT_COMMENT}, ${NICK}, ${COMMENT}, ${POST_URL}, ${IMG}, ${PARENT_IMG}'
+    '댓글 알림 이메일 템플릿 설정. 비워두면 기본 템플릿 사용. 다음 변수를 사용하면 해당 값으로 자동 치환됩니다: ${SITE_URL}, ${SITE_NAME}, ${PARENT_NICK}, ${PARENT_COMMENT}, ${NICK}, ${COMMENT}, ${POST_URL}, ${IMG}, ${PARENT_IMG}',
+    'Mẫu email thông báo tùy chỉnh. Để trống để dùng mẫu mặc định. : ${SITE_URL}, ${SITE_NAME}, ${PARENT_NICK}, ${PARENT_COMMENT}, ${NICK}, ${COMMENT}, ${POST_URL}, ${IMG}, ${PARENT_IMG}',
+    'Template notifikasi email kustom. Kosongkan untuk menggunakan template bawaan. Kolom yang dapat disertakan: ${SITE_URL}, ${SITE_NAME}, ${PARENT_NICK}, ${PARENT_COMMENT}, ${NICK}, ${COMMENT}, ${POST_URL}, ${IMG}, ${PARENT_IMG}'
   ],
   [S.ACI + '_MAIL_TEMPLATE_ADMIN']: [
     '自定义博主通知邮件模板，留空则使用默认模板。可包含的字段：${SITE_URL}, ${SITE_NAME}, ${NICK}, ${COMMENT}, ${POST_URL}, ${IP}, ${MAIL}, ${IMG}',
@@ -785,16 +937,20 @@ export default {
     'Custom admin Email notification template. Leave it blank to use the default template. Fields that can be included: ${SITE_URL}, ${SITE_NAME}, ${NICK}, ${COMMENT}, ${POST_URL}, ${IP}, ${MAIL}, ${IMG}',
     'Махсус администратор электрон почта хабарномаси шаблони. Стандарт шаблонни ишлатиш учун уни бўш қолдиринг. Қўшилиши мумкин бўлган майдонлар:  ${SITE_URL}, ${SITE_NAME}, ${NICK}, ${COMMENT}, ${POST_URL}, ${IMG}, ${PARENT_IMG}',
     '管理者へのカスタム通知メールテンプレート。空白の場合はデフォルトテンプレートを使用します。使用可能なフィールド：${SITE_URL}、${SITE_NAME}、${NICK}、${COMMENT}、${POST_URL}、${IP}、${MAIL}、${IMG}',
-    '관리자 알림 이메일 템플릿 설정. 비워두면 기본 템플릿 사용. 다음 변수를 사용하면 해당 값으로 자동 치환됩니다: ${SITE_URL}, ${SITE_NAME}, ${NICK}, ${COMMENT}, ${POST_URL}, ${IP}, ${MAIL}, ${IMG}'
+    '관리자 알림 이메일 템플릿 설정. 비워두면 기본 템플릿 사용. 다음 변수를 사용하면 해당 값으로 자동 치환됩니다: ${SITE_URL}, ${SITE_NAME}, ${NICK}, ${COMMENT}, ${POST_URL}, ${IP}, ${MAIL}, ${IMG}',
+    'Mẫu email thông báo cho quản trị viên tùy chỉnh. Để trống để dùng mẫu mặc định. : ${SITE_URL}, ${SITE_NAME}, ${NICK}, ${COMMENT}, ${POST_URL}, ${IP}, ${MAIL}, ${IMG}',
+    'Template notifikasi email admin kustom. Kosongkan untuk menggunakan template bawaan. Kolom yang dapat disertakan: ${SITE_URL}, ${SITE_NAME}, ${NICK}, ${COMMENT}, ${POST_URL}, ${IP}, ${MAIL}, ${IMG}'
   ],
   [S.ACI + '_MASTER_TAG']: [
     '博主标识自定义文字，默认为 “博主”。',
     '博主標識自定義文字，預設為 “博主”。',
-    '站長認證自訂文字，預設為「博主」。', // 可能牽涉到程式碼層面，不做更動以免造成誤導。
+    '站長認證自訂文字，預設為「博主」。',
     'Custom admin identifier.',
     'Махсус администратор идентификатори.',
     '管理者を表すカスタムテキスト。デフォルト："ブロガー"',
-    '관리자 태그 설정. (닉네임 옆에 표시됨. 예: 관리자)'
+    '관리자 태그 설정. (닉네임 옆에 표시됨. 예: 관리자)',
+    'Văn bản nhãn admin tùy chỉnh.',
+    'Teks kustom identitas admin. Bawaan: "博主".'
   ],
   [S.ACI + '_NOTIFY_SPAM']: [
     '垃圾评论是否发送通知，默认：true',
@@ -803,7 +959,9 @@ export default {
     'Notifications for spam comments. Default: true.',
     'Спам шарҳлар учун билдиришномалар. Стандарт: рост.',
     'スパムコメントの通知を送信するかどうか。デフォルト：true',
-    '스팸 댓글 알림 발송 여부. 기본값: true.'
+    '스팸 댓글 알림 발송 여부. 기본값: true.',
+    'Có gửi thông báo cho bình luận spam không. Mặc định: true.',
+    'Apakah mengirim notifikasi untuk komentar spam. Bawaan: true.'
   ],
   [S.ACI + '_CAPTCHA_PROVIDER']: [
     '人机验证码提供商',
@@ -812,7 +970,9 @@ export default {
     'CAPTCHA Provider',
     'CAPTCHA Provider',
     'CAPTCHAプロバイダー',
-    '캡차 제공자'
+    '캡차 제공자',
+    'Nhà cung cấp CAPTCHA',
+    'Penyedia CAPTCHA'
   ],
   [S.ACI + '_TURNSTILE_SITE_KEY']: [
     'Turnstile 验证码的站点密钥。申请地址: https://dash.cloudflare.com/?to=/:account/turnstile',
@@ -821,7 +981,9 @@ export default {
     'Turnstile CAPTCHA Site Key. Get from: https://dash.cloudflare.com/?to=/:account/turnstile',
     'Turnstile CAPTCHA Site Key. Get from: https://dash.cloudflare.com/?to=/:account/turnstile',
     'Turnstile CAPTCHAのサイトキー。参照: https://dash.cloudflare.com/?to=/:account/turnstile',
-    'Turnstile CAPTCHA(스팸봇 방지) 사이트 키. 발급처: https://dash.cloudflare.com/?to=/:account/turnstile'
+    'Turnstile CAPTCHA(스팸봇 방지) 사이트 키. 발급처: https://dash.cloudflare.com/?to=/:account/turnstile',
+    'Site Key của Turnstile CAPTCHA. Lấy tại: https://dash.cloudflare.com/?to=/:account/turnstile',
+    'Kunci Situs Turnstile CAPTCHA. Dapatkan dari: https://dash.cloudflare.com/?to=/:account/turnstile'
   ],
   [S.ACI + '_TURNSTILE_SECRET_KEY']: [
     'Turnstile 验证码的密钥',
@@ -830,7 +992,9 @@ export default {
     'Turnstile CAPTCHA Secret Key',
     'Turnstile CAPTCHA Secret Key',
     'Turnstile CAPTCHAのシークレットキー',
-    'Turnstile CAPTCHA Secret Key'
+    'Turnstile CAPTCHA Secret Key',
+    'Turnstile CAPTCHA Secret Key',
+    'Kunci Rahasia Turnstile CAPTCHA'
   ],
   [S.ACI + '_GEETEST_CAPTCHA_ID']: [
     '极验验证码的 Captcha ID。申请地址: https://console.geetest.com/sensbot/management',
@@ -839,7 +1003,9 @@ export default {
     'GeeTest CAPTCHA ID. Get from: https://console.geetest.com/sensbot/management',
     'GeeTest CAPTCHA ID. Get from: https://console.geetest.com/sensbot/management',
     'GeeTest CAPTCHA ID. 参照: https://console.geetest.com/sensbot/management',
-    'GeeTest CAPTCHA ID. 발급처: https://console.geetest.com/sensbot/management'
+    'GeeTest CAPTCHA ID. 발급처: https://console.geetest.com/sensbot/management',
+    'GeeTest CAPTCHA ID. Lấy tại: https://console.geetest.com/sensbot/management',
+    'GeeTest CAPTCHA ID. Dapatkan dari: https://console.geetest.com/sensbot/management'
   ],
   [S.ACI + '_GEETEST_CAPTCHA_KEY']: [
     '极验验证码的 Captcha Key',
@@ -848,25 +1014,31 @@ export default {
     'GeeTest CAPTCHA Key',
     'GeeTest CAPTCHA Key',
     'GeeTest CAPTCHA Key',
-    'GeeTest CAPTCHA Key'
+    'GeeTest CAPTCHA Key',
+    'GeeTest CAPTCHA Key',
+    'Kunci GeeTest CAPTCHA'
   ],
   [S.ACI + '_CAP_API_ENDPOINT']: [
-    'Cap 验证码 API 端点（格式：https://<实例地址>/<site_key>/）',
-    'Cap 验证码 API 端点（格式：https://<实例地址>/<site_key>/）',
-    'Cap 验证码 API 端点（格式：https://<实例地址>/<site_key>/）',
-    'Cap CAPTCHA API Endpoint (format: https://<instance_url>/<site_key>/)',
-    'Cap CAPTCHA API Endpoint (format: https://<instance_url>/<site_key>/)',
-    'Cap CAPTCHA API Endpoint (format: https://<instance_url>/<site_key>/)',
-    'Cap CAPTCHA API Endpoint (format: https://<instance_url>/<site_key>/)'
+    'Cap 验证码 API 端点。留空则使用内嵌 Cap（无需额外部署）；外部 Standalone 格式：https://<实例地址>/<site_key>/',
+    'Cap 验证码 API 端点。留空则使用内嵌 Cap（无需额外部署）；外部 Standalone 格式：https://<实例地址>/<site_key>/',
+    'Cap 验证码 API 端点。留空则使用内嵌 Cap（无需额外部署）；外部 Standalone 格式：https://<实例地址>/<site_key>/',
+    'Cap CAPTCHA API endpoint. Leave empty for built-in Cap (no extra server). External Standalone format: https://<instance_url>/<site_key>/',
+    'Cap CAPTCHA API endpoint. Leave empty for built-in Cap (no extra server). External Standalone format: https://<instance_url>/<site_key>/',
+    'Cap CAPTCHA API Endpoint。空欄で内蔵 Cap を使用（追加サーバー不要）。外部 Standalone 形式: https://<instance_url>/<site_key>/',
+    'Cap CAPTCHA API Endpoint. 비우면 내장 Cap 사용(추가 서버 불필요). 외부 Standalone 형식: https://<instance_url>/<site_key>/',
+    'Endpoint API Cap CAPTCHA. Để trống = Cap tích hợp (không cần server ngoài). Standalone ngoài: https://<instance_url>/<site_key>/',
+    'Endpoint API Cap CAPTCHA. Kosongkan = Cap bawaan (tanpa server ekstra). Standalone eksternal: https://<instance_url>/<site_key>/'
   ],
   [S.ACI + '_CAP_SECRET_KEY']: [
-    'Cap 验证码的 Secret Key',
-    'Cap 验证码的 Secret Key',
-    'Cap 验证码的 Secret Key',
-    'Cap CAPTCHA Secret Key',
-    'Cap CAPTCHA Secret Key',
-    'Cap CAPTCHA Secret Key',
-    'Cap CAPTCHA Secret Key'
+    'Cap Secret Key（仅外部 Standalone 需要；内嵌模式可留空）',
+    'Cap Secret Key（僅外部 Standalone 需要；內嵌模式可留空）',
+    'Cap Secret Key（僅外部 Standalone 需要；內嵌模式可留空）',
+    'Cap Secret Key (external Standalone only; leave empty for built-in)',
+    'Cap Secret Key (external Standalone only; leave empty for built-in)',
+    'Cap Secret Key（外部 Standalone のみ。内蔵時は空欄可）',
+    'Cap Secret Key (외부 Standalone 전용; 내장 모드는 비워둠)',
+    'Cap Secret Key (chỉ Standalone ngoài; để trống nếu dùng tích hợp)',
+    'Cap Secret Key (hanya Standalone eksternal; kosongkan untuk bawaan)'
   ],
   [S.ACI + '_QCLOUD_SECRET_ID']: [
     '腾讯云 secret id，用于垃圾评论检测。同时设置腾讯云和 Akismet 时，只有腾讯云会生效。注册：https://twikoo.js.org/cms.html',
@@ -875,7 +1047,9 @@ export default {
     'Tencent Cloud secret id for spam detection. When Tencent Cloud and Akismet are set at the same time, only Tencent Cloud will take effect. Register: https://twikoo.js.org/cms.html',
     'Спамни аниқлаш учун Тенсент Слоуд махфий идентификатори. Тенсент Слоуд ва Акисмет бир вақтнинг ўзида ўрнатилганда, фақат Тенсент Слоуд кучга киради. Рўйхатдан ўтиш: https://twikoo.js.org/cms.html',
     'Tencent CloudのシークレットID。スパムコメントの検出に使用されます。同時にTencent CloudとAkismetを設定した場合、Tencent Cloudのみが有効になります。登録：https://twikoo.js.org/cms.html',
-    'Tencent Cloud secret id (스팸 감지용). Tencent Cloud와 Akismet 동시 설정 시 Tencent Cloud만 적용. 등록: https://twikoo.js.org/cms.html'
+    'Tencent Cloud secret id (스팸 감지용). Tencent Cloud와 Akismet 동시 설정 시 Tencent Cloud만 적용. 등록: https://twikoo.js.org/cms.html',
+    'Tencent Cloud secret id để phát hiện spam. Khi cài cả Tencent Cloud và Akismet, chỉ Tencent Cloud có hiệu lực. Đăng ký: https://twikoo.js.org/cms.html',
+    'ID rahasia Tencent Cloud untuk deteksi spam komentar. Jika Tencent Cloud dan Akismet diatur bersamaan, hanya Tencent Cloud yang berlaku. Daftar: https://twikoo.js.org/cms.html'
   ],
   [S.ACI + '_QCLOUD_CMS_BIZTYPE']: [
     '腾讯云内容安全 Biztype 名称，用于垃圾评论策略。可以自定义垃圾拦截规则',
@@ -884,7 +1058,9 @@ export default {
     'Tencent Cloud Content Security Biztype name for spam comment policy. Spam blocking rules can be customized',
     'Tencent Cloud Content Security Biztype име, използвано за спам политика. Може да персонализира правилата за блокиране на спам',
     'Tencent Cloud Content Security Biztype name スパムコメントポリシー。スパムブロックルールはカスタマイズ可能',
-    'Tencent Cloud Content Security Biztype 이름 (스팸 댓글 정책용). 스팸 차단 규칙 설정 가능.'
+    'Tencent Cloud Content Security Biztype 이름 (스팸 댓글 정책용). 스팸 차단 규칙 설정 가능.',
+    'Tên Biztype bảo mật nội dung Tencent Cloud dùng cho chính sách spam.',
+    'Nama Biztype Keamanan Konten Tencent Cloud untuk kebijakan komentar spam. Aturan pemblokiran spam dapat disesuaikan'
   ],
   [S.ACI + '_QCLOUD_SECRET_KEY']: [
     '腾讯云 secret key',
@@ -893,7 +1069,64 @@ export default {
     'Tencent Cloud secret key.',
     'Тенсент Клауд махфий калити.',
     'Tencent Cloudのシークレットキー',
-    'Tencent Cloud Secret Key.'
+    'Tencent Cloud Secret Key.',
+    'Tencent Cloud Secret Key.',
+    'Kunci rahasia Tencent Cloud.'
+  ],
+  [S.ACI + '_LLM_API_KEY']: [
+    'LLM API Key，用于 AI 垃圾评论检测。仅在未配置腾讯云和 Akismet 时生效。',
+    'LLM API Key，用於 AI 垃圾評論檢測。僅在未配置騰訊雲和 Akismet 時生效。',
+    'LLM API Key，用於 AI 垃圾留言檢測。僅在未配置騰訊雲和 Akismet 時生效。',
+    'LLM API Key, used for AI spam comment detection. Only takes effect when Tencent Cloud and Akismet are not configured.',
+    'LLM API kaliti, spamni aniqlash uchun. Faqat Tencent Cloud va Akismet sozlangan bo\'lmasa ishlaydi.',
+    'LLM APIキー。AIスパムコメント検出に使用されます。Tencent CloudとAkismetが設定されていない場合のみ有効になります。',
+    'LLM API 키. AI 스팸 댓글 감지에 사용됩니다. Tencent Cloud 및 Akismet이 설정되지 않은 경우에만 작동합니다.',
+    'LLM API Key, dùng để phát hiện spam bằng AI. Chỉ có hiệu lực khi Tencent Cloud và Akismet không được cấu hình.',
+    'LLM API Key, digunakan untuk deteksi komentar spam dengan AI. Hanya berlaku jika Tencent Cloud dan Akismet tidak dikonfigurasi.'
+  ],
+  [S.ACI + '_LLM_API_ENDPOINT']: [
+    'LLM API 接口地址，默认：https://api.deepseek.com',
+    'LLM API 接口地址，預設：https://api.deepseek.com',
+    'LLM API 接口地址，預設：https://api.deepseek.com',
+    'LLM API endpoint URL, defaults to https://api.deepseek.com',
+    'LLM API endpoint manzili, standart: https://api.deepseek.com',
+    'LLM APIエンドポイントURL。デフォルト：https://api.deepseek.com',
+    'LLM API 엔드포인트 URL. 기본값: https://api.deepseek.com',
+    'Địa chỉ LLM API endpoint, mặc định: https://api.deepseek.com',
+    'URL endpoint LLM API, bawaan: https://api.deepseek.com'
+  ],
+  [S.ACI + '_LLM_MODEL']: [
+    'LLM 模型名称，默认：deepseek-v4-pro',
+    'LLM 模型名稱，預設：deepseek-v4-pro',
+    'LLM 模型名稱，預設：deepseek-v4-pro',
+    'LLM model name, default: deepseek-v4-pro',
+    'LLM model nomi, standart: deepseek-v4-pro',
+    'LLMモデル名。デフォルト：deepseek-v4-pro',
+    'LLM 모델 이름. 기본값: deepseek-v4-pro',
+    'Tên mô hình LLM, mặc định: deepseek-v4-pro',
+    'Nama model LLM, bawaan: deepseek-v4-pro'
+  ],
+  [S.ACI + '_LLM_SPAM_PROMPT']: [
+    'LLM 垃圾检测提示词（可选，留空则使用默认提示词）',
+    'LLM 垃圾檢測提示詞（可選，留空則使用預設提示詞）',
+    'LLM 垃圾檢測提示詞（可選，留白則使用預設提示詞）',
+    'LLM spam detection prompt (optional, uses default if left empty)',
+    'LLM spam prompt (ixtiyoriy, bo\'sh qolsa standart ishlatiladi)',
+    'LLMスパム検出プロンプト（オプション。空の場合はデフォルトが使用されます）',
+    'LLM 스팸 감지 프롬프트 (옵션, 비워두면 기본값 사용)',
+    'Prompt phát hiện spam LLM (tùy chọn, để trống dùng mặc định)',
+    'Prompt deteksi spam LLM (opsional, kosongkan untuk menggunakan default)'
+  ],
+  [S.ACI + '_LLM_MAX_RETRIES']: [
+    'LLM 检测最大重试次数（默认 3 次）',
+    'LLM 檢測最大重試次數（預設 3 次）',
+    'LLM 檢測最大重試次數（預設 3 次）',
+    'LLM detection maximum retries (default 3)',
+    'LLM aniqlash uchun maksimal qayta urinishlar soni (standart 3)',
+    'LLM検出最大リトライ回数（デフォルト3回）',
+    'LLM 감지 최대 재시도 횟수 (기본 3회)',
+    'Số lần thử lại tối đa của LLM (mặc định 3)',
+    'Maksimal percobaan ulang deteksi LLM (bawaan 3)'
   ],
   [S.ACI + '_PUSHOO_CHANNEL']: [
     `即时消息推送平台名称，支持：${pushooChannels.join('、')} 等`,
@@ -902,7 +1135,9 @@ export default {
     `IM notification push channel. Support: ${pushooChannels.join(', ')}`,
     `ИМ билдиришномаси суриш канали. Қўллаб-қувватлаш: ${pushooChannels.join(', ')}`,
     `即時メッセージプッシュプラットフォームの名前。${pushooChannels.join('、')} などに対応しています。`,
-    `실시간 알림을 받을 서비스 설정. 지원: ${pushooChannels.join(', ')}`
+    `실시간 알림을 받을 서비스 설정. 지원: ${pushooChannels.join(', ')}`,
+    `Kênh gửi thông báo IM tức thì. ${pushooChannels.join(', ')}`,
+    `Saluran push notifikasi IM. Mendukung: ${pushooChannels.join(', ')}`
   ],
   [S.ACI + '_PUSHOO_TOKEN']: [
     '即时消息推送 token。请参考 https://pushoo.js.org 里的详细说明配置',
@@ -911,7 +1146,9 @@ export default {
     'IM notification push token. See https://pushoo.js.org for details',
     'ИМ билдиришномаси пуш токени. Тафсилотлар учун https://pushoo.js.org га қаранг',
     '即時メッセージプッシュトークン。詳細な設定については、https://pushoo.js.org の説明をご覧ください',
-    '선택한 실시간 알림 서비스 인증 토큰. 설정 방법은 https://pushoo.js.org 를 참조.'
+    '선택한 실시간 알림 서비스 인증 토큰. 설정 방법은 https://pushoo.js.org 를 참조.',
+    'Token gửi thông báo IM. Xem https://pushoo.js.org để biết chi tiết',
+    'Token push notifikasi IM. Lihat https://pushoo.js.org untuk detailnya'
   ],
   [S.ACI + '_DISPLAYED_FIELDS']: [
     '界面上展示的输入框，默认：nick,mail,link',
@@ -920,7 +1157,9 @@ export default {
     'Input boxes displayed on the interface. Default: nick,mail,link',
     'Поля ввода, отображаемые на интерфейсе, Стандарт: nick,mail,link',
     '画面に表示される入力欄。デフォルト：nick,mail,link',
-    '화면에 표시할 정보 입력란. 기본값: nick,mail,link'
+    '화면에 표시할 정보 입력란. 기본값: nick,mail,link',
+    'Các ô nhập liệu hiển thị trên giao diện. Mặc định: nick,mail,link',
+    'Kotak input yang ditampilkan di antarmuka. Bawaan: nick,mail,link'
   ],
   [S.ACI + '_REQUIRED_FIELDS']: [
     '评论必填信息，设为 nick,mail,link 代表全必填，设为 none 代表全选填，默认：nick,mail',
@@ -929,7 +1168,9 @@ export default {
     'Required fields for comments. Set to "nick,mail,link" means all fields are required. Set to "none" means all fields are optional. Default: nick,mail.',
     'Шарҳлар учун зарур майдонлар. «Ниск,маил,линк» га ўрнатилган бўлса, барча майдонлар талаб қилинади. «Йўқ» га ўрнатилиши барча майдонлар ихтиёрий эканлигини англатади. Стандарт: ник, почта.',
     'コメント必須項目。すべてを必須にする場合は nick,mail,link に設定、すべてを任意にする場合はnoneに設定してください。デフォルト：nick,mail',
-    '댓글 작성 시 필수 입력 정보. "nick,mail,link"는 모두 필수, "none"은 모두 선택 압력. 기본값: nick,mail.'
+    '댓글 작성 시 필수 입력 정보. "nick,mail,link"는 모두 필수, "none"은 모두 선택 압력. 기본값: nick,mail.',
+    'Trường bắt buộc khi bình luận. "nick,mail,link" là tất cả bắt buộc, "none" là tất cả tùy chọn. Mặc định: nick,mail.',
+    'Kolom wajib untuk komentar. Atur ke "nick,mail,link" berarti semua wajib, "none" berarti semua opsional. Bawaan: nick,mail.'
   ],
   [S.ACI + '_SC_MAIL_NOTIFY']: [
     '是否同时通过 IM 和邮件 2 种方式通知博主，默认只通过 IM 通知博主，默认：false',
@@ -938,7 +1179,9 @@ export default {
     'Whether to notify admin via IM and email at the same time, the default is to notify admin only via IM. Default: false.',
     'Администраторни бир вақтнинг ўзида ИМ ва электрон почта орқали хабардор қилиш керакми, сукут бўйича администраторни фақат ИМ орқали хабардор қилиш керак. Стандарт: нотўғри.',
     '管理者にIMとメールで同時に通知するかどうか。デフォルトはIMのみで通知、デフォルト：false',
-    '실시간 알림과 이메일로 동시에 관리자에게 알릴지 여부. 기본값은 실시간 알림만 사용. 기본값: false.'
+    '실시간 알림과 이메일로 동시에 관리자에게 알릴지 여부. 기본값은 실시간 알림만 사용. 기본값: false.',
+    'Có thông báo admin qua cả IM lẫn email không. Mặc định chỉ dùng IM. Mặc định: false.',
+    'Apakah akan memberitahu admin melalui IM dan email secara bersamaan, bawaan hanya melalui IM. Bawaan: false.'
   ],
   [S.ACI + '_SENDER_EMAIL']: [
     '邮件通知邮箱地址。对于大多数邮箱服务商，SENDER_EMAIL 必须和 SMTP_USER 保持一致，否则无法发送邮件。',
@@ -947,7 +1190,9 @@ export default {
     'Email address for Email notification. For most email service providers, SENDER_EMAIL must be consistent with SMTP_USER, otherwise emails cannot be sent.',
     'Электрон почта хабарномаси учун электрон почта манзили. Аксарият электрон почта хизмати провайдерлари учун  SENDER_EMAIL билан мос келиши керак, акс ҳолда электрон почта хабарларини юбориб бўлмайди.',
     'メール通知のメールアドレス。 ほとんどのメールボックス・プロバイダでは、SENDER_EMAILはSMTP_USERと同じでなければなりません。',
-    '알림 이메일 발신 주소. 대부분의 이메일 서비스 제공자의 경우 SENDER_EMAIL과 SMTP_USER가 일치해야 메일 발송이 가능합니다.'
+    '알림 이메일 발신 주소. 대부분의 이메일 서비스 제공자의 경우 SENDER_EMAIL과 SMTP_USER가 일치해야 메일 발송이 가능합니다.',
+    'Địa chỉ email gửi thông báo. Với hầu hết nhà cung cấp, SENDER_EMAIL phải giống SMTP_USER.',
+    'Alamat email untuk notifikasi email. Untuk sebagian besar penyedia layanan email, SENDER_EMAIL harus sama dengan SMTP_USER, jika tidak email tidak dapat dikirim.'
   ],
   [S.ACI + '_SENDER_NAME']: [
     '邮件通知标题。',
@@ -956,7 +1201,9 @@ export default {
     'The title for Email notification.',
     'Электрон почта хабарномаси сарлавҳаси.',
     'メール通知のタイトル',
-    '알림 이메일 발신자 이름.'
+    '알림 이메일 발신자 이름.',
+    'Tiêu đề thông báo email.',
+    'Judul notifikasi email.'
   ],
   [S.ACI + '_SHOW_EMOTION']: [
     '启用插入表情功能，默认为：true',
@@ -965,7 +1212,9 @@ export default {
     'Enable emojis. Default: true.',
     'Кулгичларни ёқинг. Стандарт: рост.',
     '顔文字の挿入を有効にするかどうか。デフォルト：true',
-    '이모티콘 삽입 기능 활성화. 기본값: true.'
+    '이모티콘 삽입 기능 활성화. 기본값: true.',
+    'Bật chức năng chèn emoji. Mặc định: true.',
+    'Aktifkan penyisipan emoji. Bawaan: true'
   ],
   [S.ACI + '_SHOW_IMAGE']: [
     '启用插入图片功能，默认为：true',
@@ -974,7 +1223,9 @@ export default {
     'Enable picture uploading. Default: true.',
     'Расм юклашни ёқинг. Стандарт: рост.',
     '画像のアップロードを有効にするかどうか。デフォルト：true',
-    '이미지 업로드 기능 활성화. 기본값: true.'
+    '이미지 업로드 기능 활성화. 기본값: true.',
+    'Bật chức năng tải ảnh lên. Mặc định: true.',
+    'Aktifkan pengunggahan gambar. Bawaan: true'
   ],
   [S.ACI + '_SHOW_ORDER']: [
     '评论排序下拉框，默认为：true',
@@ -983,7 +1234,9 @@ export default {
     'Show sort dropdown. Default: true.',
     'Изоҳларни тартиблаш очиладиган менюси. Стандарт: рост.',
     'コメントの並べ替えドロップダウンを表示するかどうか。デフォルト：true',
-    '댓글 정렬 드롭다운 메뉴 표시 여부. 기본값: true.'
+    '댓글 정렬 드롭다운 메뉴 표시 여부. 기본값: true.',
+    'Hiển thị dropdown sắp xếp bình luận. Mặc định: true.',
+    'Tampilkan dropdown urutan komentar. Bawaan: true'
   ],
   [S.ACI + '_SHOW_DISLIKE']: [
     '评论点踩按钮，默认为：true',
@@ -992,7 +1245,9 @@ export default {
     'Show dislike button. Default: true.',
     'Изоҳларни ёқтирмаслик тугмаси. Стандарт: рост.',
     '「よくないね」ボタンを表示するかどうか。デフォルト：true',
-    '댓글 싫어요 버튼 표시 여부. 기본값: true.'
+    '댓글 싫어요 버튼 표시 여부. 기본값: true.',
+    'Hiển thị nút không thích. Mặc định: true.',
+    'Tampilkan tombol tidak suka. Bawaan: true'
   ],
   [S.ACI + '_SHOW_UA']: [
     '是否显示用户系统和浏览器，默认为：true',
@@ -1001,7 +1256,9 @@ export default {
     'Show users\' OS and browser. Default: true.',
     'Фойдаланувчиларнинг ОС ва браузерини кўрсатиш. Стандарт: рост.',
     'ユーザーのOSとブラウザーの情報を表示するかどうか。デフォルト：true',
-    '댓글 작성자의 운영체제 및 브라우저 표시 여부. 기본값: true.'
+    '댓글 작성자의 운영체제 및 브라우저 표시 여부. 기본값: true.',
+    'Hiển thị hệ điều hành và trình duyệt người dùng. Mặc định: true.',
+    'Tampilkan OS dan peramban pengguna. Bawaan: true'
   ],
   [S.ACI + '_SHOW_REGION']: [
     '是否显示用户 IP 属地到省，可能不准确，不支持 IPv6，默认为：false',
@@ -1010,7 +1267,9 @@ export default {
     'Show users\' IP region (province). Default: false.',
     'Фойдаланувчиларнинг ИП ҳудудини (вилоят) кўрсатиш. Стандарт: нотўғри.',
     'ユーザーIPの所在地（省）を表示するかどうか。正確でない場合があります。IPv6はサポートされていません。デフォルト：false',
-    '사용자 IP 지역(도/시 단위) 표시 여부 (부정확할 수 있음, IPv6 미지원). 기본값: false.'
+    '사용자 IP 지역(도/시 단위) 표시 여부 (부정확할 수 있음, IPv6 미지원). 기본값: false.',
+    'Hiển thị vùng IP người dùng (cấp tỉnh). Có thể không chính xác, không hỗ trợ IPv6. Mặc định: false.',
+    'Tampilkan wilayah IP pengguna (provinsi). Mungkin tidak akurat, tidak mendukung IPv6. Bawaan: false'
   ],
   [S.ACI + '_SITE_NAME']: [
     '网站名称',
@@ -1019,7 +1278,9 @@ export default {
     'Website name.',
     'Вебсайт номи.',
     'ウェブサイト名',
-    '웹사이트 이름.'
+    '웹사이트 이름.',
+    'Tên website.',
+    'Nama situs web'
   ],
   [S.ACI + '_SITE_URL']: [
     '网站地址',
@@ -1028,7 +1289,9 @@ export default {
     'Website URL.',
     'Вебсайт URL.',
     'ウェブサイトのアドレス',
-    '웹사이트 주소.'
+    '웹사이트 주소.',
+    'Địa chỉ website.',
+    'Alamat situs web'
   ],
   [S.ACI + '_SMTP_HOST']: [
     '自定义 SMTP 服务器地址。如您已配置 SMTP_SERVICE，此项请留空。',
@@ -1036,9 +1299,10 @@ export default {
     '自訂 SMTP 伺服器位址。如您已設定 SMTP_SERVICE，此項請留白。',
     'Custom SMTP server address. If you have configured SMTP_SERVICE, please leave it empty.',
     'Махсус СМТП сервер манзили. Агар сиз СМТП_СEРВИСE созлаган бўлсангиз, уни бўш қолдиринг.',
-    '自定义 SMTP 服务器地址。如您已配置 SMTP_SERVICE，此项请留空。',
     'カスタムSMTPサーバのアドレス。SMTP_SERVICEを設定している場合は空白のままにします。',
-    'SMTP 서버 주소. SMTP_SERVICE를 설정한 경우 비워두세요.'
+    'SMTP 서버 주소. SMTP_SERVICE를 설정한 경우 비워두세요.',
+    'Địa chỉ máy chủ SMTP tùy chỉnh. Để trống nếu đã cấu hình SMTP_SERVICE.',
+    'Alamat server SMTP kustom. Jika Anda telah mengonfigurasi SMTP_SERVICE, biarkan kosong.'
   ],
   [S.ACI + '_SMTP_PASS']: [
     '邮件通知邮箱密码，QQ、163邮箱请填写授权码。',
@@ -1047,7 +1311,9 @@ export default {
     'Email notification mailbox password. Enter authorization code for QQ/163 mail.',
     'Электрон почта хабарномаси почта қутиси пароли. ҚҚ/163 почтаси учун авторизация кодини киритинг.',
     'メール通知のメールボックスパスワード。QQ、163メールは認証コードを入力してください',
-    '알림 이메일 계정 SMTP용 비밀번호. (QQ, 163 등 대부분 별도의 앱 비밀번호/인증 코드 사용)'
+    '메일 알림 계정 비밀번호. QQ/163 메일은 인증 코드를 입력하세요.',
+    'Mật khẩu hòm thư gửi thông báo. Với QQ/163 hãy nhập mã ủy quyền.',
+    'Kata sandi kotak email notifikasi. Untuk email QQ/163, masukkan kode otorisasi.'
   ],
   [S.ACI + '_SMTP_PORT']: [
     '自定义 SMTP 端口。如您已配置 SMTP_SERVICE，此项请留空。',
@@ -1056,7 +1322,9 @@ export default {
     'Custom SMTP port. If you have configured SMTP_SERVICE, please leave it empty.',
     'Махсус СМТП порти. Агар сиз СМТП_СEРВИС созлаган бўлсангиз, уни бўш қолдиринг.',
     'カスタムSMTPポート。SMTP_SERVICEを設定している場合は、空白のままにします。',
-    'SMTP 포트. SMTP_SERVICE를 설정한 경우 비워두세요.'
+    'SMTP 포트. SMTP_SERVICE를 설정한 경우 비워두세요.',
+    'Cổng SMTP tùy chỉnh. Để trống nếu đã cấu hình SMTP_SERVICE.',
+    'Port SMTP kustom. Jika Anda telah mengonfigurasi SMTP_SERVICE, biarkan kosong.'
   ],
   [S.ACI + '_SMTP_SECURE']: [
     '自定义 SMTP 是否使用TLS，请填写 true 或 false。如您已配置 SMTP_SERVICE，此项请留空。',
@@ -1065,7 +1333,9 @@ export default {
     'Custom TLS for SMTP. Enter "true" or "false". If you have configured SMTP_SERVICE, please leave it empty.',
     'СМТП учун махсус ТЛС. «Тўғри» ёки «нотўғри» ни киритинг. Агар сиз СМТП_СEРВИС созлаган бўлсангиз, уни бўш қолдиринг.',
     'SMTPがTLSを使用するかどうかをカスタマイズします。trueまたはfalseを記入してください。SMTP_SERVICEを設定している場合は、この項目を空白にしてください。',
-    'SMTP TLS 사용 여부 (true 또는 false 입력). SMTP_SERVICE를 설정한 경우 비워두세요.'
+    'SMTP TLS 사용 여부 (true 또는 false 입력). SMTP_SERVICE를 설정한 경우 비워두세요.',
+    'Sử dụng TLS cho SMTP. Nhập "true" hoặc "false". Để trống nếu đã cấu hình SMTP_SERVICE.',
+    'Gunakan TLS untuk SMTP kustom. Masukkan "true" atau "false". Jika Anda telah mengonfigurasi SMTP_SERVICE, biarkan kosong.'
   ],
   [S.ACI + '_SMTP_SERVICE']: [
     `邮件通知邮箱服务商。支持：${smtpServices.join('、')}`,
@@ -1074,7 +1344,9 @@ export default {
     `Email service provider for Email notification. Support: ${smtpServices.join(', ')}`,
     `Электрон почта хабарномаси учун электрон почта хизмати провайдери. Қўллаб-қувватлаш: ${smtpServices.join(', ')}`,
     `メール通知メールボックスサービスプロバイダ。サポート: ${smtpServices.join(',')}.`,
-    `알림 발송 이메일 서비스 선택. 지원 목록: ${smtpServices.join(', ')}`
+    `알림 발송 이메일 서비스 선택. 지원 목록: ${smtpServices.join(', ')}`,
+    `Nhà cung cấp dịch vụ email gửi thông báo. : ${smtpServices.join(', ')}`,
+    `Penyedia layanan email untuk notifikasi. Mendukung: ${smtpServices.join(', ')}`
   ],
   [S.ACI + '_SMTP_USER']: [
     '邮件通知邮箱用户名。',
@@ -1083,7 +1355,9 @@ export default {
     'Email notification mailbox username.',
     'Электрон почта хабарномаси почта қутиси фойдаланувчи номи.',
     'メール通知のメールボックスユーザー名。',
-    '선택한 이메일 알림 서비스 아이디'
+    '선택한 이메일 알림 서비스 아이디',
+    'Tên đăng nhập hòm thư gửi thông báo.',
+    'Nama pengguna kotak email notifikasi.'
   ],
   ADMIN_CONFIG_RESET: [
     '重置',
@@ -1092,7 +1366,9 @@ export default {
     'Reset',
     'Ресет',
     'リセット',
-    '초기화'
+    '초기화',
+    'Đặt lại',
+    'Reset'
   ],
   ADMIN_CONFIG_SAVE: [
     '保存',
@@ -1101,7 +1377,9 @@ export default {
     'Save',
     'Сақлаш',
     '保存',
-    '저장'
+    '저장',
+    'Lưu',
+    'Simpan'
   ],
   ADMIN_CREDENTIALS: [
     '私钥文件',
@@ -1110,7 +1388,9 @@ export default {
     'Private key file',
     'Shaxsiy kalit fayli',
     '秘密鍵ファイル',
-    '개인 키 파일'
+    '개인 키 파일',
+    'File khóa riêng tư',
+    'File kunci pribadi'
   ],
   ADMIN_CREDENTIALS_FAQ: [
     '如何获得私钥',
@@ -1119,7 +1399,9 @@ export default {
     'How to get the private key',
     'Shaxsiy kalitni qanday olish mumkin',
     '秘密鍵を取得する方法',
-    '개인 키 발급 방법'
+    '개인 키 발급 방법',
+    'Cách lấy khóa riêng tư',
+    'Cara mendapatkan kunci pribadi'
   ],
   ADMIN_CREDENTIALS_PLACEHOLDER: [
     '请粘贴私钥文件内容',
@@ -1128,7 +1410,9 @@ export default {
     'Please paste the contents of the private key file',
     'Iltimos, shaxsiy kalit faylining mazmunini joylashtiring',
     '秘密鍵ファイルの内容を貼り付けてください',
-    '개인 키 파일 내용을 붙여넣으세요'
+    '개인 키 파일 내용을 붙여넣으세요',
+    'Hãy dán nội dung file khóa riêng tư vào đây',
+    'Silakan tempel isi file kunci pribadi'
   ],
   ADMIN_FORGOT: [
     '忘记密码',
@@ -1137,7 +1421,9 @@ export default {
     'Forget your password',
     'Парол унутилган',
     'パスワードを忘れた',
-    '비밀번호 찾기'
+    '비밀번호 찾기',
+    'Quên mật khẩu',
+    'Lupa kata sandi'
   ],
   ADMIN_EXPORT: [
     '导出',
@@ -1146,7 +1432,9 @@ export default {
     'Export',
     'Экспорт',
     'エクスポート',
-    '내보내기'
+    '내보내기',
+    'Xuất dữ liệu',
+    'Ekspor'
   ],
   ADMIN_EXPORT_WARN: [
     '将全部数据导出为 JSON 文件。如果遇到评论较多、导出失败或缺失数据，请连接数据库手动导出',
@@ -1155,7 +1443,9 @@ export default {
     'Export all data as a JSON file. If you encounter export failures or missing data, connect to the database to export manually',
     'Барча маълумотларни ЖСОН файли сифатида экспорт қилинг. Экспорт хатоси ёки этишмаётган маълумотларга дуч келсангиз, қўлда экспорт қилиш учун маълумотлар базасига уланинг',
     'すべてのデータをJSONファイルとしてエクスポートします。コメントが多く、エクスポートに失敗したりデータが欠落している場合は、データベースに手動で接続してエクスポートしてください',
-    '모든 데이터를 JSON 파일로 내보냅니다. 댓글이 많아 내보내기 실패 또는 데이터 누락 발생 시, 데이터베이스에 직접 연결하여 수동으로 내보내세요.'
+    '모든 데이터를 JSON 파일로 내보냅니다. 댓글이 많아 내보내기 실패 또는 데이터 누락 발생 시, 데이터베이스에 직접 연결하여 수동으로 내보내세요.',
+    'Xuất toàn bộ dữ liệu thành file JSON. Nếu gặp lỗi hoặc thiếu dữ liệu, hãy kết nối cơ sở dữ liệu để xuất thủ công',
+    'Ekspor semua data sebagai file JSON. Jika ekspor gagal atau data hilang, sambungkan ke basis data untuk ekspor manual'
   ],
   ADMIN_EXPORT_COMMENT: [
     '导出评论',
@@ -1164,7 +1454,9 @@ export default {
     'Export comment',
     'Изохни экспорт килиш',
     'コメントをエクスポート',
-    '댓글 내보내기'
+    '댓글 내보내기',
+    'Xuất bình luận',
+    'Ekspor komentar'
   ],
   ADMIN_EXPORT_COUNTER: [
     '导出访问量',
@@ -1173,7 +1465,9 @@ export default {
     'Export counter',
     'Экспорт сони',
     'ページビューをエクスポート',
-    '통계 내보내기'
+    '통계 내보내기',
+    'Xuất lượt truy cập',
+    'Ekspor penghitung'
   ],
   [S.AI]: [
     '导入',
@@ -1182,7 +1476,9 @@ export default {
     'Import',
     'Импорт',
     'インポート',
-    '가져오기'
+    '가져오기',
+    'Nhập dữ liệu',
+    'Impor'
   ],
   [S.AI + '_FILE_REQUIRED']: [
     '未选择文件',
@@ -1191,7 +1487,9 @@ export default {
     'No file selected',
     'Файлни танланмади',
     'ファイルが選択されていません',
-    '파일이 선택되지 않았습니다'
+    '파일이 선택되지 않았습니다',
+    'Chưa chọn file',
+    'Tidak ada file yang dipilih'
   ],
   [S.AI + '_IMPORTED']: [
     '完成导入 ',
@@ -1200,7 +1498,9 @@ export default {
     'Imported ',
     'Импорт қилинди ',
     'インポート完了 ',
-    '가져오기 완료 '
+    '가져오기 완료 ',
+    'Đã nhập ',
+    'Diimpor '
   ],
   [S.AI + '_IMPORTING']: [
     '开始导入 ',
@@ -1209,7 +1509,9 @@ export default {
     'Importing ',
     'Импорт қилинмоқда ',
     'インポートを開始 ',
-    '가져오는 중 '
+    '가져오는 중 ',
+    'Đang nhập ',
+    'Mengimpor '
   ],
   [S.AI + '_LOG']: [
     '日志',
@@ -1218,7 +1520,9 @@ export default {
     'Log',
     'Лог',
     'システムログ',
-    '로그'
+    '로그',
+    'Nhật ký',
+    'Log'
   ],
   [S.AI + '_SELECT']: [
     '请选择',
@@ -1227,7 +1531,9 @@ export default {
     'Select',
     'Танланг',
     '選択してください',
-    '선택하세요'
+    '선택하세요',
+    'Chọn',
+    'Pilih'
   ],
   [S.AI + '_SELECT_FILE']: [
     '选择文件',
@@ -1236,7 +1542,9 @@ export default {
     'Select file',
     'Файлни танланг',
     'ファイルを選択',
-    '파일 선택'
+    '파일 선택',
+    'Chọn file',
+    'Pilih file'
   ],
   [S.AI + '_SELECT_SOURCE']: [
     '选择源系统',
@@ -1245,7 +1553,9 @@ export default {
     'Select source',
     'Манба танланг',
     'ソースを選択',
-    '가져올 댓글 데이터 선택'
+    '가져올 댓글 데이터 선택',
+    'Chọn nguồn dữ liệu',
+    'Pilih sumber'
   ],
   [S.AI + '_SOURCE_REQUIRED']: [
     '未选择源系统',
@@ -1254,7 +1564,9 @@ export default {
     'No source selected.',
     'Ҳеч қандай манба танланмаган.',
     'ソースが選択されていません',
-    '가져올 댓글 데이터가 선택되지 않았습니다.'
+    '가져올 댓글 데이터가 선택되지 않았습니다.',
+    'Chưa chọn nguồn dữ liệu.',
+    'Sumber belum dipilih'
   ],
   [S.AI + '_START']: [
     '开始导入',
@@ -1263,7 +1575,9 @@ export default {
     'Start import',
     'Импортни бошлаш',
     'インポートを開始',
-    '가져오기 시작'
+    '가져오기 시작',
+    'Bắt đầu nhập',
+    'Mulai impor'
   ],
   [S.AI + '_STARTING']: [
     '开始导入',
@@ -1272,7 +1586,9 @@ export default {
     'Importing',
     'Импорт қилинмоқда',
     'インポート中です',
-    '가져오는 중'
+    '가져오는 중',
+    'Đang nhập',
+    'Mengimpor'
   ],
   [S.AI + '_TIP_ARTALK']: [
     '请上传 JSON 格式的 Artalk 导出文件，文件名通常为 comments.data.json',
@@ -1281,7 +1597,9 @@ export default {
     'Please upload the Artalk export file in JSON format.The file name is usually comments.data.json',
     'Арталк экспорт файлини ЖСОН форматида юкланг. Файл номи одатда comments.data.json бўлади.',
     'JSON形式のArtalkエクスポートファイルをアップロードしてください。ファイル名は通常、comments.data.jsonです。',
-    'JSON 형식의 Artalk 내보내기 파일을 업로드하세요. 파일 이름은 보통 comments.data.json 입니다.'
+    'JSON 형식의 Artalk 내보내기 파일을 업로드하세요. 파일 이름은 보통 comments.data.json 입니다.',
+    'Hãy tải lên file xuất Artalk định dạng JSON. Tên file thường là comments.data.json',
+    'Silakan unggah file ekspor Artalk dalam format JSON, nama file biasanya comments.data.json'
   ],
   [S.AI + '_TIP_DISQUS']: [
     '请上传 XML 格式的 Disqus 导出文件，文件名通常为 [网站名称]-[导出时间]-all.xml',
@@ -1290,7 +1608,9 @@ export default {
     'Please upload the Disqus export file in XML format. The file name is usually [website name]-[export time]-all.xml',
     'Disqus экспорт файлини ХМЛ форматида юкланг. Файл номи одатда [веб-сайт номи]-[экспорт vaqti]-all.xml',
     'DisqusエクスポートファイルをXML形式でアップロードしてください。ファイル名は通常、[サイト名]-[エクスポート時間]-all.xmlです。',
-    'XML 형식의 Disqus 내보내기 파일을 업로드하세요. 파일 이름은 보통 [웹사이트이름]-[내보내기시간]-all.xml 입니다.'
+    'XML 형식의 Disqus 내보내기 파일을 업로드하세요. 파일 이름은 보통 [웹사이트이름]-[내보내기시간]-all.xml 입니다.',
+    'Hãy tải lên file xuất Disqus định dạng XML. Tên file thường là [tên-website]-[thời-gian]-all.xml',
+    'Silakan unggah file ekspor Disqus dalam format XML, nama file biasanya [nama situs]-[waktu ekspor]-all.xml'
   ],
   [S.AI + '_TIP_VALINE']: [
     '请上传 JSON 格式的 Valine 导出文件，文件名通常为 Comment.json',
@@ -1299,7 +1619,9 @@ export default {
     'Please upload the Valine export file in JSON format. The file name is usually Comment.json',
     'Илтимос, Валине экспорт файлини ЖСОН форматида юкланг. Файл номи одатда Comment.json',
     'JSON形式のValineエクスポートファイルをアップロードしてください。ファイル名は通常、Comment.jsonです。',
-    'JSON 형식의 Valine 내보내기 파일을 업로드하세요. 파일 이름은 보통 Comment.json 입니다.'
+    'JSON 형식의 Valine 내보내기 파일을 업로드하세요. 파일 이름은 보통 Comment.json 입니다.',
+    'Hãy tải lên file xuất Valine định dạng JSON. Tên file thường là Comment.json',
+    'Silakan unggah file ekspor Valine dalam format JSON, nama file biasanya Comment.json'
   ],
   [S.AI + '_UPLOADED']: [
     '上传完成 ',
@@ -1308,7 +1630,9 @@ export default {
     'Uploaded ',
     'Юкланди ',
     'アップロード完了',
-    '업로드 완료 '
+    '업로드 완료 ',
+    'Đã tải lên ',
+    'Diunggah '
   ],
   [S.AI + '_UPLOADING']: [
     '已上传 ',
@@ -1317,7 +1641,9 @@ export default {
     'Uploading ',
     'Юкланмоқда ',
     'アップロード中です',
-    '업로드 중 '
+    '업로드 중 ',
+    'Đang tải lên ',
+    'Mengunggah '
   ],
   [S.AI + '_WARN']: [
     '支持从其他评论系统的备份文件导入评论。\n数据是安全的，导入功能完全在您的云环境进行。\n建议在导入前备份 comment 数据库。',
@@ -1326,7 +1652,9 @@ export default {
     'Import comments from other comment systems.\nThe data is safe, and the import function is performed entirely in your cloud environment.\nPlease backup your comment database before importing.',
     'Бошқа шарҳ тизимларидан шарҳларни импорт қилинг.\nМаълумотлар хавфсиз ва импорт функцияси тўлиқ булутли муҳитда амалга оширилади.\nИмпорт қилишдан олдин шарҳлар маълумотлар базасини захираланг.',
     '他のコメントシステムのバックアップファイルからのインポートに対応。\nデータは安全で、インポート機能はすべてクラウド環境で実行されます。\nインポート前にコメントデータベースをバックアップすることを推奨します。',
-    '다른 댓글 시스템의 백업 파일에서 댓글을 가져올 수 있습니다.\n데이터 가져오기는 설정하신 클라우드에서만 안전하게 진행됩니다.\n가져오기 전에 댓글 데이터베이스를 백업하는 것이 좋습니다.'
+    '다른 댓글 시스템의 백업 파일에서 댓글을 가져올 수 있습니다.\n데이터 가져오기는 설정하신 클라우드에서만 안전하게 진행됩니다.\n가져오기 전에 댓글 데이터베이스를 백업하는 것이 좋습니다.',
+    'Hỗ trợ nhập bình luận từ file sao lưu hệ thống khác.\nDữ liệu an toàn, chức năng nhập thực hiện hoàn toàn trên môi trường cloud của bạn.\nNên sao lưu cơ sở dữ liệu bình luận trước khi nhập.',
+    'Mendukung impor komentar dari file cadangan sistem komentar lain.\nData aman, fungsi impor sepenuhnya dilakukan di lingkungan cloud Anda.\nDisarankan untuk mencadangkan basis data komentar sebelum mengimpor.'
   ],
   ADMIN_LOGIN: [
     '登录',
@@ -1335,7 +1663,9 @@ export default {
     'Sign in',
     'Тизимга кириш',
     'ログイン',
-    '로그인'
+    '로그인',
+    'Đăng nhập',
+    'Masuk'
   ],
   ADMIN_LOGIN_TITLE: [
     'Twikoo 评论管理',
@@ -1344,7 +1674,9 @@ export default {
     'Twikoo Management Panel',
     'Twikoo Бошқарув Панели',
     'Twikoo コメント管理',
-    'Twikoo 관리자 패널'
+    'Twikoo 관리자 패널',
+    'Twikoo Quản lý bình luận',
+    'Manajemen Komentar Twikoo'
   ],
   ADMIN_LOGOUT: [
     '退出登录',
@@ -1353,7 +1685,9 @@ export default {
     'Sign out',
     'Тизимдан чиқиш',
     'ログアウト',
-    '로그아웃'
+    '로그아웃',
+    'Đăng xuất',
+    'Keluar'
   ],
   ADMIN_NEED_UPDATE: [
     '若要使用评论管理，请更新 Twikoo 云函数',
@@ -1362,7 +1696,9 @@ export default {
     'A new version of Twikoo is required for comment management.',
     'Фикрларни бошқариш учун Твикоо нинг янги версияси талаб қилинади.',
     'コメント管理を使用するには、Twikoo クラウド関数を更新してください',
-    '새 버전의 댓글 관리를 사용하려면 Twikoo Cloud Function을 업데이트하세요.'
+    '새 버전의 댓글 관리를 사용하려면 Twikoo Cloud Function을 업데이트하세요.',
+    'Cần cập nhật Twikoo Cloud Function để dùng quản lý bình luận.',
+    'Versi baru Twikoo diperlukan untuk manajemen komentar.'
   ],
   ADMIN_PASSWORD: [
     '密码',
@@ -1371,7 +1707,9 @@ export default {
     'Password',
     'Пароль',
     'パスワード',
-    '비밀번호'
+    '비밀번호',
+    'Mật khẩu',
+    'Kata Sandi'
   ],
   ADMIN_PASSWORD_PLACEHOLDER: [
     '请输入',
@@ -1380,7 +1718,9 @@ export default {
     'Enter your password...',
     'Паролингизни киритинг...',
     '入力してください',
-    '비밀번호를 입력하세요...'
+    '비밀번호를 입력하세요...',
+    'Nhập mật khẩu...',
+    'Masukkan kata sandi...'
   ],
   ADMIN_PASSWORD_REQUIRED: [
     '请输入密码',
@@ -1389,7 +1729,9 @@ export default {
     'Please enter your password',
     'Илтимос, паролингизни киритинг',
     'パスワードを入力してください',
-    '비밀번호를 입력하세요'
+    '비밀번호를 입력하세요',
+    'Vui lòng nhập mật khẩu',
+    'Silakan masukkan kata sandi Anda'
   ],
   ADMIN_REGIST: [
     '注册',
@@ -1398,7 +1740,9 @@ export default {
     'Register',
     'Рўйхатдан ўтиш',
     '登録',
-    '관리자 등록'
+    '관리자 등록',
+    'Đăng ký',
+    'Daftar'
   ],
   ADMIN_REGIST_FAILED: [
     '注册失败',
@@ -1407,7 +1751,9 @@ export default {
     'Register failed',
     'Рўйхатдан ўтиш амалга ошмади',
     '登録に失敗しました',
-    '관리자 등록 실패'
+    '관리자 등록 실패',
+    'Đăng ký thất bại',
+    'Pendaftaran gagal'
   ],
   ADMIN_SET_PASSWORD: [
     '设置密码',
@@ -1416,7 +1762,9 @@ export default {
     'Set password',
     'Пароль қўйиш',
     'パスワードの設定',
-    '비밀번호 설정'
+    '비밀번호 설정',
+    'Đặt mật khẩu',
+    'Atur kata sandi'
   ],
   ADMIN_SET_PASSWORD_CONFIRM: [
     '确认密码',
@@ -1425,7 +1773,9 @@ export default {
     'Confirm password',
     'Паролни тасдиқланг',
     'パスワードの確認',
-    '비밀번호 확인'
+    '비밀번호 확인',
+    'Xác nhận mật khẩu',
+    'Konfirmasi kata sandi'
   ],
   ADMIN_SET_PASSWORD_CONFIRM_PLACEHOLDER: [
     '确认密码',
@@ -1434,7 +1784,9 @@ export default {
     'Confirm password...',
     'Паролни тасдиқлаш...',
     'パスワードの確認',
-    '비밀번호 확인...'
+    '비밀번호 확인...',
+    'Xác nhận mật khẩu...',
+    'Konfirmasi kata sandi...'
   ],
   ADMIN_SET_PASSWORD_PLACEHOLDER: [
     '密码',
@@ -1443,7 +1795,9 @@ export default {
     'Password',
     'Пароль',
     'パスワード',
-    '비밀번호'
+    '비밀번호',
+    'Mật khẩu',
+    'Kata sandi'
   ],
   ADMIN_TITLE: [
     'Twikoo 管理面板',
@@ -1452,7 +1806,53 @@ export default {
     'Twikoo Management Panel',
     'Twikoo Бошқарув Панели',
     'Twikoo管理パネル',
-    'Twikoo 관리 패널'
+    'Twikoo 관리 패널',
+    'Twikoo Bảng quản trị',
+    'Panel Manajemen Twikoo'
+  ],
+  COMMENTS_SEARCH: [
+    '搜索',
+    '搜索',
+    '搜尋',
+    'Search',
+    'Излаш',
+    '検索',
+    '검색',
+    'Tìm kiếm',
+    'Cari'
+  ],
+  COMMENTS_SEARCH_PLACEHOLDER: [
+    '搜索评论',
+    '搜索評論',
+    '搜尋留言',
+    'Search comments',
+    'Изоҳларни қидириш',
+    'コメントを検索',
+    '댓글 검색',
+    'Tìm kiếm bình luận',
+    'Cari komentar'
+  ],
+  COMMENTS_SEARCH_NO_RESULT: [
+    '没有找到评论',
+    '沒有找到評論',
+    '沒有找到留言',
+    'No comments found',
+    'Изоҳлар топилмади',
+    'コメントが見つかりません',
+    '댓글을 찾을 수 없습니다',
+    'Không tìm thấy bình luận',
+    'Tidak ada komentar ditemukan'
+  ],
+  COMMENTS_SEARCH_COUNT_PREFIX: [
+    '找到 ',
+    '找到 ',
+    '找到 ',
+    'Found ',
+    'Топилди: ',
+    '見つかった ',
+    '찾은 ',
+    'Tìm thấy ',
+    'Ditemukan '
   ],
   COMMENTS_COUNT_SUFFIX: [
     ' 条评论',
@@ -1461,7 +1861,9 @@ export default {
     ' comments',
     ' изоҳлар',
     ' 件のコメント',
-    '개의 댓글'
+    '개의 댓글',
+    ' bình luận',
+    ' komentar'
   ],
   COMMENTS_SORT_NEWEST: [
     '最新',
@@ -1470,7 +1872,9 @@ export default {
     'Newest',
     'Энг янги',
     '最新',
-    '최신'
+    '최신',
+    'Mới nhất',
+    'Terbaru'
   ],
   COMMENTS_SORT_OLDEST: [
     '最早',
@@ -1479,7 +1883,9 @@ export default {
     'Oldest',
     'Энг эски',
     '最古',
-    '오래됨'
+    '오래됨',
+    'Cũ nhất',
+    'Terlama'
   ],
   COMMENTS_SORT_POPULAR: [
     '热门',
@@ -1488,7 +1894,9 @@ export default {
     'Popular',
     'Машҳур',
     '人気',
-    '인기'
+    '인기',
+    'Phổ biến',
+    'Populer'
   ],
   COMMENTS_EXPAND: [
     '查看更多',
@@ -1497,7 +1905,9 @@ export default {
     'Load more',
     'Давомини юклаш',
     'もっと見る',
-    '더 보기'
+    '더 보기',
+    'Xem thêm',
+    'Muat lebih banyak'
   ],
   COMMENTS_NO_COMMENTS: [
     '没有评论',
@@ -1506,7 +1916,9 @@ export default {
     'No comment',
     'Изоҳларсиз',
     'コメントはありません',
-    '아직 댓글이 없습니다.'
+    '아직 댓글이 없습니다.',
+    'Chưa có bình luận',
+    'Berikan pendapatmu'
   ],
   COMMENT_EXPAND: [
     '展开',
@@ -1515,7 +1927,9 @@ export default {
     'Read more',
     'Давомини ўқиш',
     '全文を表示',
-    '더 보기'
+    '더 보기',
+    'Xem thêm',
+    'Baca selengkapnya'
   ],
   COMMENT_COLLAPSE: [
     '收起',
@@ -1524,7 +1938,9 @@ export default {
     'Collapse',
     'Очиш',
     '折りたたむ',
-    '접기'
+    '접기',
+    'Thu gọn',
+    'Ciutkan'
   ],
   COMMENT_MASTER_TAG: [
     '博主',
@@ -1533,7 +1949,9 @@ export default {
     'Admin',
     'Модератор',
     '管理者',
-    '관리자'
+    '관리자',
+    'Admin',
+    'Admin'
   ],
   COMMENT_REPLIED: [
     '回复',
@@ -1542,7 +1960,20 @@ export default {
     'Reply',
     'Жавоб бериш',
     '返信',
-    '답글'
+    '답글',
+    'Trả lời',
+    'Balas'
+  ],
+  COMMENT_DELETE_CONFIRM: [
+    '确认删除你的评论？',
+    '確認刪除你的評論？',
+    '確認刪除你的評論？',
+    'Delete your comment?',
+    'Izohingizni o\'chirasizmi?',
+    'あなたのコメントを削除しますか？',
+    '댓글을 삭제하시겠습니까?',
+    'Xóa bình luận của bạn?',
+    'Hapus pendapat Anda?'
   ],
   COMMENT_REVIEWING_TAG: [
     '审核中',
@@ -1551,7 +1982,9 @@ export default {
     'Pending',
     'Кутилмоқда',
     '検討中',
-    '검토 중'
+    '검토 중',
+    'Đang duyệt',
+    'Tertunda'
   ],
   COMMENT_TOP_TAG: [
     '置顶',
@@ -1560,7 +1993,9 @@ export default {
     'Pinned',
     'Қадоқланган',
     '固定',
-    '고정됨'
+    '고정됨',
+    'Đã ghim',
+    'Disematkan'
   ],
   COMMENT_FAILED: [
     '评论失败',
@@ -1569,7 +2004,9 @@ export default {
     'Comment failed',
     'Фикр билдирилмади',
     'コメント失敗',
-    '댓글 등록 실패'
+    '댓글 등록 실패',
+    'Gửi bình luận thất bại',
+    'Komentar gagal'
   ],
   META_INPUT_LINK: [
     '网址',
@@ -1578,7 +2015,9 @@ export default {
     'Website',
     'Веб-сайт',
     'ウェブサイト',
-    '웹사이트'
+    '웹사이트',
+    'Website',
+    'Situs Web'
   ],
   META_INPUT_MAIL: [
     '邮箱',
@@ -1587,7 +2026,9 @@ export default {
     'Email',
     'Email',
     'メールアドレス',
-    '이메일'
+    '이메일',
+    'Email',
+    'Email'
   ],
   META_INPUT_NICK: [
     '昵称',
@@ -1596,7 +2037,9 @@ export default {
     'Nickname',
     'Исм',
     '名前',
-    '닉네임'
+    '닉네임',
+    'Tên',
+    'Nama Panggilan'
   ],
   META_INPUT_NOT_REQUIRED: [
     '选填',
@@ -1605,7 +2048,9 @@ export default {
     'Optional',
     'Ихтиёрий',
     '任意',
-    '선택'
+    '선택',
+    'Tùy chọn',
+    'Opsional'
   ],
   META_INPUT_REQUIRED: [
     '必填',
@@ -1614,7 +2059,9 @@ export default {
     'Required',
     'Мажбурий',
     '必須',
-    '필수'
+    '필수',
+    'Bắt buộc',
+    'Wajib'
   ],
   PAGINATION_COUNT_PREFIX: [
     '共 ',
@@ -1623,7 +2070,9 @@ export default {
     '',
     '',
     '合計 ',
-    '총 '
+    '총 ',
+    'Tổng ',
+    'Total '
   ],
   PAGINATION_COUNT_SUFFIX: [
     ' 条',
@@ -1632,7 +2081,9 @@ export default {
     ' entries',
     ' ёзувлар',
     ' 件',
-    '개'
+    '개',
+    ' mục',
+    ' entri'
   ],
   PAGINATION_GOTO_PREFIX: [
     '前往',
@@ -1641,7 +2092,9 @@ export default {
     'Goto page',
     'Саҳифага ўтиш',
     'ページに移動',
-    '이동할 페이지: '
+    '이동할 페이지: ',
+    'Đến trang',
+    'Ke halaman'
   ],
   PAGINATION_GOTO_SUFFIX: [
     '页',
@@ -1649,7 +2102,10 @@ export default {
     '頁',
     '',
     'ページ',
-    ''
+    '',
+    '',
+    '',
+    'Halaman'
   ],
   PAGINATION_PAGESIZE: [
     '条/页',
@@ -1658,7 +2114,9 @@ export default {
     'entries/page',
     'ёзувлар/саҳифа',
     '件/ページ',
-    '개/페이지'
+    '개/페이지',
+    'mục/trang',
+    'entri/halaman'
   ],
   SUBMIT_CANCEL: [
     '取消',
@@ -1667,7 +2125,9 @@ export default {
     'Cancel',
     'Бекор қилиш',
     'キャンセル',
-    '취소'
+    '취소',
+    'Hủy',
+    'Batal'
   ],
   SUBMIT_PREVIEW: [
     '预览',
@@ -1676,7 +2136,9 @@ export default {
     'Preview',
     'Кўриб чиқиш',
     'プレビュー',
-    '미리보기'
+    '미리보기',
+    'Xem trước',
+    'Pratinjau'
   ],
   SUBMIT_SEND: [
     '发送',
@@ -1685,7 +2147,9 @@ export default {
     'Send',
     'Юбормоқ',
     '送信',
-    '등록'
+    '등록',
+    'Gửi',
+    'Kirim'
   ],
   IMAGE_UPLOAD_PLACEHOLDER: [
     '图片上传中',
@@ -1694,7 +2158,9 @@ export default {
     'Uploading image',
     'Расм юклаш',
     '画像のアップロード中',
-    '이미지 업로드 중'
+    '이미지 업로드 중',
+    'Đang tải ảnh lên',
+    'Mengunggah gambar'
   ],
   IMAGE_UPLOAD_FAILED: [
     '图片上传失败',
@@ -1703,7 +2169,9 @@ export default {
     'IMAGE UPLOAD FAILED',
     'РАСМ ЮКЛАНМАДИ',
     '画像のアップロード失敗',
-    '이미지 업로드 실패'
+    '이미지 업로드 실패',
+    'TẢI ẢNH THẤT BẠI',
+    'UNGGAH GAMBAR GAGAL'
   ],
   IMAGE_UPLOAD_NSFW: [
     '图片包含不当内容，禁止上传',
@@ -1712,7 +2180,9 @@ export default {
     'Image contains inappropriate content, upload rejected',
     'Расм ноқулай мазмунни ўз ичига олади, юклаш рад қилинди',
     '画像に不適切なコンテンツが含まれているため、アップロードが拒否されました',
-    '이미지에 부적절한 콘텐츠가 포함되어 있어 업로드가 거부되었습니다'
+    '이미지에 부적절한 콘텐츠가 포함되어 있어 업로드가 거부되었습니다',
+    'Ảnh chứa nội dung không phù hợp, tải lên bị từ chối',
+    'Gambar mengandung konten tidak pantas, unggahan ditolak'
   ],
   IMAGE_UPLOAD_FAILED_NO_CONF: [
     '博主未配置图床服务',
@@ -1721,7 +2191,9 @@ export default {
     'The blogger didn\'t configured any image bed service',
     'Муаллиф ҳеч қандай тасвир хизматини созламаган',
     '管理者が画像配信サービスを設定していません',
-    '블로거가 이미지 호스팅 서비스를 설정하지 않았습니다.'
+    '블로거가 이미지 호스팅 서비스를 설정하지 않았습니다.',
+    'Quản trị viên chưa cấu hình dịch vụ lưu trữ ảnh',
+    'Admin belum mengatur layanan penyimpanan gambar'
   ],
   IMAGE_UPLOAD_PLEASE_WAIT: [
     '图片上传中，请稍候再发送',
@@ -1730,7 +2202,9 @@ export default {
     'Uploading image, please try again later',
     'Расм юкланмоқда, кейинроқ қайта уриниб кўринг',
     '画像のアップロードが完了するまでお待ちください',
-    '이미지 업로드 중입니다. 잠시 후 다시 시도해주세요.'
+    '이미지 업로드 중입니다. 잠시 후 다시 시도해주세요.',
+    'Đang tải ảnh lên, vui lòng chờ rồi thử lại',
+    'Gambar sedang diunggah, tunggu sebentar'
   ],
   SUBMIT_SENDING: [
     '发送中',
@@ -1739,7 +2213,9 @@ export default {
     'Sending',
     'Юбориш',
     '送信中',
-    '등록 중'
+    '등록 중',
+    'Đang gửi',
+    'Mengirim'
   ],
   TIMEAGO_DAYS: [
     '天前',
@@ -1748,7 +2224,9 @@ export default {
     'days ago',
     'кунлар олдин',
     '日前',
-    '일 전'
+    '일 전',
+    'ngày trước',
+    'hari lalu'
   ],
   TIMEAGO_HOURS: [
     '小时前',
@@ -1757,7 +2235,9 @@ export default {
     'hours ago',
     'соатлар олдин',
     '時間前',
-    '시간 전'
+    '시간 전',
+    'giờ trước',
+    'jam lalu'
   ],
   TIMEAGO_MINUTES: [
     '分钟前',
@@ -1766,7 +2246,9 @@ export default {
     'minutes ago',
     'дақиқалар олдин',
     '分前',
-    '분 전'
+    '분 전',
+    'phút trước',
+    'menit lalu'
   ],
   TIMEAGO_NOW: [
     '刚刚',
@@ -1775,7 +2257,9 @@ export default {
     'Just now',
     'Ҳозиргина',
     'たった今',
-    '방금 전'
+    '방금 전',
+    'Vừa xong',
+    'Baru saja'
   ],
   TIMEAGO_SECONDS: [
     '秒前',
@@ -1784,6 +2268,8 @@ export default {
     'seconds ago',
     'сониялар олдин',
     '秒前',
-    '초 전'
+    '초 전',
+    'giây trước',
+    'detik lalu'
   ]
 }

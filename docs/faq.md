@@ -100,6 +100,17 @@ Akismet (Automattic Kismet) 是应用广泛的一个垃圾留言过滤系统，�
 
 需要注意的是，由于 Akismet 服务响应速度较慢（大约 6 秒），影响用户体验，Twikoo 采取 “先放行，后检测” 的策略，垃圾评论会在发表后短暂可见。
 
+### 配置 LLM 反垃圾服务
+
+使用 [OpenAI SDK](https://www.npmjs.com/package/openai) 兼容的 API 服务（如 DeepSeek, OpenAI 等）来实现更智能的垃圾评论检测。管理员可以自定义提示词，灵活定义何为“垃圾评论”。
+
+- `LLM_API_KEY`：填写您的 API 密钥。
+- `LLM_API_ENDPOINT`：填写 API 接口地址（默认 `https://api.deepseek.com`）。
+- `LLM_MODEL`：填写模型名称（默认 `deepseek-v4-pro`）。
+- `LLM_MAX_RETRIES`：LLM 检测最大重试次数（默认 3 次）。
+
+**(可选)** 配置 `LLM_SPAM_PROMPT`：自定义提示词。
+
 ## 登录管理面板遇到错误 AUTH_INVALID_CUSTOM_LOGIN_TICKET
 
 一般是配置好登录私钥之后，又重新下载了登录私钥，导致之前配置的登录私钥失效了。<br>
@@ -129,7 +140,8 @@ Akismet (Automattic Kismet) 是应用广泛的一个垃圾留言过滤系统，�
 | [lsky-pro](https://www.lsky.pro) | 私有部署 | 兰空图床 2.0 版本，`IMAGE_CDN` 请配置图床首页 URL 地址（如 `https://7bu.top`），`IMAGE_CDN_TOKEN` 获取方式请参考教程 [杜老师说图床：新版本去不图床 Token 的获取与清空](https://dusays.com/454/)，获取到的 token 格式应为 `1\|1bJbwlqBfnggmOMEZqXT5XusaIwqiZjCDs7r1Ob5`） |
 | [PicList](https://piclist.cn/)                         | 私有部署        | `IMAGE_CDN_URL` 配置图床 URL 地址，`IMAGE_CDN_TOKEN`填写参考[piclist文档：接口鉴权](https://piclist.cn/advanced.html#%E6%8E%A5%E5%8F%A3%E9%89%B4%E6%9D%83) |
 | [EasyImage2.0](https://github.com/icret/EasyImages2.0) | 私有部署        | `IMAGE_CDN_URL` 配置图床 URL 地址，`IMAGE_CDN_TOKEN`填写 TOKEN |
-| [Chevereto](https://chevereto.com) | 私有部署 | cheverto v4版本,`IMAGE_CDN_URL` 配置图床 URL 地址（如 `https://your-chevereto.com`），`IMAGE_CDN_TOKEN` 填写 API Key（在管理后台 Dashboard → Settings → API 中获取）。注意：需要支持 API v1 的 Chevereto 实例 |
+| [Chevereto](https://chevereto.com) | 私有部署 | Chevereto v4 版本,`IMAGE_CDN_URL` 配置图床 URL 地址（如 `https://your-chevereto.com`），`IMAGE_CDN_TOKEN` 填写 API Key（在管理后台 Dashboard → Settings → API 中获取）。注意：需要支持 API v1 的 Chevereto 实例 |
+| S3 / R2 / MinIO | S3 兼容服务 | `IMAGE_CDN` 设为 `s3`，填写 `S3_BUCKET`、`S3_ACCESS_KEY_ID`、`S3_SECRET_ACCESS_KEY` 等配置；`S3_FORCE_PATH_STYLE` 请根据端点类型配置：Cloudflare R2、MinIO 等 path-style 端点保持为空或 `true`，已绑定存储桶的自定义域名（如腾讯云 COS 自定义域名）则设为 `false` |
 
 ## 私有部署能连接自己的数据库吗？
 

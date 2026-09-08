@@ -1,20 +1,24 @@
+const crypto = require('crypto')
+
 let customLibs = {}
 
 module.exports = {
   setCustomLibs (libs) {
     customLibs = libs
   },
-  getCheerio () {
-    const $ = require('cheerio') // jQuery 服务器版
-    return $
+  getHtmlToText () {
+    const { compile } = require('html-to-text') // HTML 转纯文本
+    return compile({
+      wordwrap: false,
+      selectors: [
+        { selector: 'a', options: { ignoreHref: true } },
+        { selector: 'img', format: 'skip' }
+      ]
+    })
   },
   getAkismetClient () {
     const { AkismetClient } = require('akismet-api') // 反垃圾 API
     return AkismetClient
-  },
-  getCryptoJS () {
-    const CryptoJS = require('crypto-js') // 编解码
-    return CryptoJS
   },
   getFormData () {
     const FormData = require('form-data') // 图片上传
@@ -46,13 +50,13 @@ module.exports = {
     return marked
   },
   getMd5 () {
-    const md5 = require('blueimp-md5') // MD5 哈希
-    return md5
+    return (message) => {
+      return crypto.createHash('md5').update(String(message)).digest('hex')
+    }
   },
   getSha256 () {
-    const { SHA256 } = require('crypto-js') // SHA256 哈希
     return (message) => {
-      return SHA256(message).toString()
+      return crypto.createHash('sha256').update(message == null ? '' : String(message)).digest('hex')
     }
   },
   getNodemailer () {
@@ -64,9 +68,9 @@ module.exports = {
     const pushoo = require('pushoo').default // 即时消息通知
     return pushoo
   },
-  getTencentcloud () {
-    const tencentcloud = require('tencentcloud-sdk-nodejs') // 腾讯云 API NODEJS SDK
-    return tencentcloud
+  getTencentcloudTms () {
+    const tencentcloudTms = require('tencentcloud-sdk-nodejs-tms') // 腾讯云文本内容安全 SDK
+    return tencentcloudTms
   },
   getXml2js () {
     const xml2js = require('xml2js') // XML 解析

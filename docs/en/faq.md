@@ -103,6 +103,17 @@ Akismet (Automattic Kismet) is a widely used spam filtering system by Matt Mulle
 1. Register [akismet.com](https://akismet.com)
 2. Select Akismet Personal subscription, copy the Akismet API Key and configure it in the Twikoo admin panel "Anti-Spam" module
 
+### Configure LLM Anti-Spam Service
+
+Use [OpenAI SDK](https://www.npmjs.com/package/openai) compatible API services (such as DeepSeek, OpenAI, etc.) to implement more intelligent spam comment detection. Administrators can customize the prompt to flexibly define what constitutes "spam comments."
+
+- `LLM_API_KEY`: Enter your API key.
+- `LLM_API_ENDPOINT`: Enter the API endpoint URL (default `https://api.deepseek.com`).
+- `LLM_MODEL`: Enter the model name (default `deepseek-v4-pro`).
+- `LLM_MAX_RETRIES`: Maximum retries for LLM detection (default 3).
+
+**(Optional)** Configure `LLM_SPAM_PROMPT`: Customize the prompt.
+
 ## Error encountered in login administration panel AUTH_INVALID_CUSTOM_LOGIN_TICKET
 
 Generally, after configuring the login private key, the login private key is downloaded again, which causes the previously configured login private key to be invalid.<br>
@@ -127,6 +138,7 @@ The Tencent Cloud environment comes with cloud storage, so you can upload images
 | [PicList](https://piclist.cn/) | Self-hosted | Set `IMAGE_CDN_URL` to the service URL. For `IMAGE_CDN_TOKEN`, see [PicList docs: API Authentication](https://piclist.cn/advanced.html#%E6%8E%A5%E5%8F%A3%E9%89%B4%E6%9D%83) |
 | [EasyImage2.0](https://github.com/icret/EasyImages2.0) | Self-hosted | Set `IMAGE_CDN_URL` to the API URL and `IMAGE_CDN_TOKEN` to your token |
 | [Chevereto](https://chevereto.com) | Self-hosted | Set `IMAGE_CDN_URL` to your Chevereto site (e.g. `https://your-chevereto.com`) and `IMAGE_CDN_TOKEN` to your API Key (found in Dashboard → Settings → API). Requires a paid Chevereto license or a fork that supports API v1 |
+| S3 / R2 / MinIO | S3-compatible service | Set `IMAGE_CDN` to `s3`, then configure `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, and related options; configure `S3_FORCE_PATH_STYLE` according to endpoint type: keep it empty or `true` for Cloudflare R2, MinIO, and other path-style endpoints, and set it to `false` for bucket-bound custom domains, such as Tencent Cloud COS custom domains |
 
 ## Can self-hosted deployments connect to an external database?
 

@@ -58,7 +58,7 @@
 
 <script>
 import { app } from '../index'
-import { timeago, call, convertLink, renderLinks, renderMath, renderCode, t } from '../../utils'
+import { timeago, call, convertLink, renderLinks, renderMath, renderCode, sanitizeHtml, t } from '../../utils'
 import { version } from '../../version'
 import TkAvatar from './TkAvatar.vue'
 import TkPagination from './TkPagination.vue'
@@ -104,7 +104,10 @@ export default {
       })
       if (res.result && !res.result.code) {
         this.count = res.result.count
-        this.comments = res.result.data
+        this.comments = res.result.data.map(comment => ({
+          ...comment,
+          comment: sanitizeHtml(comment.comment)
+        }))
       }
       this.$nextTick(() => {
         renderLinks(this.$refs.comments)
@@ -269,7 +272,7 @@ export default {
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
 }
 .tk-admin-comment-filter-keyword {
   flex: 1;
@@ -279,7 +282,7 @@ export default {
   margin: 0 0.5em;
   padding: 0 0.5em;
   color: #ffffff;
-  background: none;
+  background-color: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(144,147,153,0.31);
   border-radius: 4px;
   position: relative;

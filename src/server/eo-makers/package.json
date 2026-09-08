@@ -1,11 +1,11 @@
 {
-  "name": "twikoo-edgeone-pages",
-  "version": "1.7.7",
-  "description": "Twikoo comment system backend for Tencent EdgeOne Pages",
+  "name": "twikoo-edgeone-makers",
+  "version": "1.7.22",
+  "description": "Twikoo comment system backend for Tencent EdgeOne Makers",
   "author": "imaegoo <hello@imaegoo.com> (https://github.com/imaegoo)",
   "license": "MIT",
   "type": "module",
-  "main": "node-functions/index.js",
+  "main": "cloud-functions/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/twikoojs/twikoo.git"
@@ -19,15 +19,16 @@
     "edge-computing"
   ],
   "scripts": {
-    "dev": "edgeone pages dev",
+    "dev": "edgeone makers dev",
     "build": "node build.cjs",
     "postinstall": "node build.cjs"
   },
   "dependencies": {
+    "@edgeone/pages-blob": "latest",
     "@imaegoo/node-ip2region": "^2.1.1",
     "bowser": "^2.13.1",
     "pako": "^2.1.0",
-    "twikoo-func": "^1.7.7",
+    "twikoo-func": "^1.7.22",
     "uuid": "^8.3.2",
     "xss": "^1.0.15"
   }

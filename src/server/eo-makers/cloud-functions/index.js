@@ -1,15 +1,19 @@
 /*!
- * Twikoo EdgeOne Pages Node Function
+ * Twikoo EdgeOne Makers Node Function
  * (c) 2020-present iMaeGoo
  * Released under the MIT License.
  *
- * 使用 twikoo-func 实现核心逻辑，通过 Edge Function 操作 KV 数据库
+ * 使用 twikoo-func 实现核心逻辑，通过 Cloud Function 操作 Blob 数据库
  */
 
+import { getStore } from '@edgeone/pages-blob'
 import { v4 as uuidv4 } from 'uuid'
 import xss from 'xss'
 import bowser from 'bowser'
+import { AsyncLocalStorage } from 'node:async_hooks'
+import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto'
 import {
+  getHtmlToText,
   getMd5,
   getSha256,
   getXml2js,
@@ -26,6 +30,7 @@ import {
   getAvatar,
   isQQ,
   addQQMailSuffix,
+  getQQNick,
   getQQAvatar,
   getPasswordStatus,
   preCheckSpam,
@@ -34,7 +39,9 @@ import {
   checkCapCaptcha,
   getConfig,
   getConfigForAdmin,
-  validate
+  validate,
+  checkCommentOwnership,
+  isValidEmail
 } from 'twikoo-func/utils'
 import {
   jsonParse,
@@ -49,9 +56,228 @@ import { sendNotice, emailTest } from 'twikoo-func/utils/notify'
 import { uploadImage } from 'twikoo-func/utils/image'
 import logger from 'twikoo-func/utils/logger'
 import constants from 'twikoo-func/utils/constants'
+import capUtils from 'twikoo-func/utils/cap'
+
+const {
+  createCap,
+  kvStorage,
+  createChallenge,
+  redeemChallenge,
+  isBuiltinCap
+} = capUtils
 
 const { RES_CODE, MAX_REQUEST_TIMES } = constants
-const VERSION = '1.7.7'
+const htmlToText = getHtmlToText()
+const VERSION = '1.7.22'
+const EO_SMTP_BRIDGE_PATH = '/smtp'
+const SMTP_BRIDGE_PROBE_TIMEOUT_MS = 5000
+
+// ==================== SMTP Bridge ====================
+
+const mailBridgeContextStorage = new AsyncLocalStorage()
+
+async function withMailBridgeContext (context, fn) {
+  return mailBridgeContextStorage.run(context, fn)
+}
+
+function getMailService (mailConfig) {
+  return (mailConfig.service || '').toLowerCase()
+}
+
+function isHttpMailService (mailConfig) {
+  const service = getMailService(mailConfig)
+  return service === 'sendgrid' || service === 'mailchannels'
+}
+
+function validateMailAuth (mailConfig) {
+  if (!mailConfig.auth || !mailConfig.auth.user) {
+    throw new Error('需要在 SMTP_USER 中配置账户名，如果邮件服务不需要可随意填写。')
+  }
+  if (!mailConfig.auth || !mailConfig.auth.pass) {
+    throw new Error('需要在 SMTP_PASS 中配置密码或 API 令牌。')
+  }
+}
+
+function getFirstHeader (req, names) {
+  for (const name of names) {
+    const value = req.get(name)
+    if (value) return String(value).split(',')[0].trim()
+  }
+  return ''
+}
+
+function normalizeSmtpBridgeUrl (url) {
+  try {
+    const parsedUrl = new URL(String(url || '').trim())
+    if (!/^https?:$/i.test(parsedUrl.protocol)) return ''
+    if (parsedUrl.pathname.replace(/\/+$/, '') !== EO_SMTP_BRIDGE_PATH) {
+      parsedUrl.pathname = EO_SMTP_BRIDGE_PATH
+    }
+    parsedUrl.hash = ''
+    return parsedUrl.toString()
+  } catch (e) {
+    return ''
+  }
+}
+
+function addSmtpBridgeCandidate (candidates, value, protocol) {
+  value = String(value || '').trim()
+  if (!value) return
+
+  const url = normalizeSmtpBridgeUrl(
+    /^https?:\/\//i.test(value)
+      ? value
+      : `${protocol || 'https'}://${value}`
+  )
+  if (url && !candidates.includes(url)) {
+    candidates.push(url)
+  }
+}
+
+function getSmtpBridgeCandidateHost (url) {
+  try {
+    return new URL(url).host.toLowerCase().replace(/\.$/, '')
+  } catch (e) {
+    return ''
+  }
+}
+
+function formatSmtpBridgeUrlForError (url) {
+  try {
+    const parsedUrl = new URL(url)
+    parsedUrl.search = ''
+    parsedUrl.hash = ''
+    return parsedUrl.toString()
+  } catch (e) {
+    return String(url || '')
+  }
+}
+
+function signSmtpBridgeProbe (token, nonce, host) {
+  return createHmac('sha256', token)
+    .update(nonce)
+    .update('\n')
+    .update(host)
+    .digest('hex')
+}
+
+function timingSafeEqualHex (a, b) {
+  try {
+    const left = Buffer.from(String(a || ''), 'hex')
+    const right = Buffer.from(String(b || ''), 'hex')
+    return left.length === right.length && timingSafeEqual(left, right)
+  } catch (e) {
+    return false
+  }
+}
+
+async function verifySmtpBridgeUrl (url, token) {
+  const host = getSmtpBridgeCandidateHost(url)
+  if (!host) return false
+
+  const nonce = randomBytes(16).toString('hex')
+  let response
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => {
+    controller.abort()
+  }, SMTP_BRIDGE_PROBE_TIMEOUT_MS)
+
+  try {
+    response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'probe', nonce, bridgeHost: host }),
+      signal: controller.signal
+    })
+  } catch (e) {
+    return false
+  } finally {
+    clearTimeout(timeoutId)
+  }
+
+  let result
+  try {
+    result = await response.json()
+  } catch (e) {
+    return false
+  }
+
+  const expected = signSmtpBridgeProbe(token, nonce, host)
+  return response.ok &&
+    result.ok &&
+    result.bridgeHost === host &&
+    timingSafeEqualHex(result.signature, expected)
+}
+
+async function getSmtpBridgeUrl (context) {
+  if (context.url) return context.url
+
+  for (const url of context.urls || []) {
+    if (await verifySmtpBridgeUrl(url, context.token)) {
+      context.url = url
+      return url
+    }
+  }
+
+  const candidates = context.urls && context.urls.length
+    ? context.urls.map(formatSmtpBridgeUrlForError).join(', ')
+    : '无'
+  throw new Error(`EdgeOne Makers SMTP Bridge 自动发现失败，未找到可校验的 /smtp 地址。候选地址：${candidates}`)
+}
+
+async function requestSmtpBridge (action, mailConfig, mail = {}) {
+  const context = mailBridgeContextStorage.getStore() || {}
+  if (!context.token) {
+    throw new Error('使用自定义 SMTP 需要配置 TWIKOO_SMTP_BRIDGE_TOKEN 环境变量。')
+  }
+  const bridgeUrl = await getSmtpBridgeUrl(context)
+
+  const response = await fetch(bridgeUrl, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${context.token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      action,
+      host: mailConfig.host,
+      port: mailConfig.port,
+      secure: mailConfig.secure,
+      user: mailConfig.auth.user,
+      pass: mailConfig.auth.pass,
+      from: mail.from,
+      to: mail.to,
+      subject: mail.subject,
+      html: mail.html
+    })
+  })
+
+  let result
+  try {
+    result = await response.json()
+  } catch (e) {
+    throw new Error(`SMTP Bridge 返回异常：HTTP ${response.status}`)
+  }
+
+  if (!response.ok || !result.ok) {
+    throw new Error(result.message || `SMTP Bridge 请求失败：${formatSmtpBridgeUrlForError(bridgeUrl)} HTTP ${response.status}`)
+  }
+  return result
+}
+
+function createMailBridgeContext (req) {
+  const runtimeEnv = globalThis.process?.env || {}
+  const env = { ...runtimeEnv, ...(req.env || {}) }
+  const token = env.TWIKOO_SMTP_BRIDGE_TOKEN
+  const protocol = getFirstHeader(req, ['x-forwarded-proto']) || req.protocol
+  const candidates = []
+
+  addSmtpBridgeCandidate(candidates, req.body?.envId)
+  addSmtpBridgeCandidate(candidates, req.origin)
+  addSmtpBridgeCandidate(candidates, getFirstHeader(req, ['host']), protocol)
+
+  return { urls: candidates, token }
+}
 
 // 注入自定义依赖（对标 Cloudflare 版本）
 setCustomLibs({
@@ -63,20 +289,26 @@ setCustomLibs({
   nodemailer: {
     createTransport (mailConfig) {
       return {
-        verify () {
-          if (!mailConfig.service || (mailConfig.service.toLowerCase() !== 'sendgrid' && mailConfig.service.toLowerCase() !== 'mailchannels')) {
-            throw new Error('仅支持 SendGrid 和 MailChannels 邮件服务。')
+        async verify () {
+          validateMailAuth(mailConfig)
+          if (isHttpMailService(mailConfig)) return true
+          if (mailConfig.host) {
+            await requestSmtpBridge('verify', mailConfig)
+            return true
           }
-          if (!mailConfig.auth || !mailConfig.auth.user) {
-            throw new Error('需要在 SMTP_USER 中配置账户名，如果邮件服务不需要可随意填写。')
-          }
-          if (!mailConfig.auth || !mailConfig.auth.pass) {
-            throw new Error('需要在 SMTP_PASS 中配置 API 令牌。')
-          }
-          return true
+          throw new Error('EdgeOne Makers 仅支持 SendGrid、MailChannels，或通过 SMTP_HOST 使用 Go SMTP Bridge。')
         },
-        sendMail ({ from, to, subject, html }) {
-          if (mailConfig.service.toLowerCase() === 'sendgrid') {
+        async sendMail ({ from, to, subject, html }) {
+          validateMailAuth(mailConfig)
+          const service = getMailService(mailConfig)
+          if (mailConfig.host) {
+            return requestSmtpBridge('send', mailConfig, { from, to, subject, html })
+          }
+          if (!isHttpMailService(mailConfig)) {
+            throw new Error('EdgeOne Makers 仅支持 SendGrid、MailChannels，或通过 SMTP_HOST 使用 Go SMTP Bridge。')
+          }
+
+          if (service === 'sendgrid') {
             return fetch('https://api.sendgrid.com/v3/mail/send', {
               method: 'POST',
               headers: {
@@ -90,7 +322,7 @@ setCustomLibs({
                 content: [{ type: 'text/html', value: html }]
               })
             })
-          } else if (mailConfig.service.toLowerCase() === 'mailchannels') {
+          } else if (service === 'mailchannels') {
             return fetch('https://api.mailchannels.net/tx/v1/send', {
               method: 'POST',
               headers: {
@@ -177,6 +409,8 @@ function toCommentDto (comment, uid, replies = [], comments = [], cfg) {
     }
   }
   const showRegion = !!cfg.SHOW_REGION && cfg.SHOW_REGION !== 'false'
+  const ups = comment.ups || []
+  const downs = comment.downs || []
   return {
     id: comment._id.toString(),
     nick: comment.nick,
@@ -188,14 +422,20 @@ function toCommentDto (comment, uid, replies = [], comments = [], cfg) {
     browser: displayBrowser,
     ipRegion: showRegion ? getIpRegion(comment.ip, false) : '',
     master: comment.master,
+    // Keep the legacy like field for backward compatibility.
+    // New reaction counts and user state are derived from ups/downs.
     like: comment.like ? comment.like.length : 0,
-    liked: comment.like ? comment.like.findIndex((item) => item === uid) > -1 : false,
-    replies: replies,
+    liked: Boolean(uid && ups.includes(uid)),
+    disliked: Boolean(uid && downs.includes(uid)),
+    ups: ups.length,
+    downs: downs.length,
+    replies,
     rid: comment.rid,
     pid: comment.pid,
     ruser: getRuser(comment.pid, comments),
     top: comment.top,
     isSpam: comment.isSpam,
+    isOwner: Boolean(uid && comment.uid === uid),
     created: comment.created,
     updated: comment.updated
   }
@@ -275,91 +515,162 @@ setInterval(() => {
   Object.keys(requestTimes).forEach(key => delete requestTimes[key])
 }, 10 * 60 * 1000)
 
-// ==================== KV 代理层 ====================
+// ==================== 评论过滤函数（原本在 KV 内，移除 KV 后迁移到 Blob 数据库层） ====================
 
-function createKVProxy (req) {
-  // 使用 eo-pages-host（EdgeOne Pages 提供的原始域名）
-  const host = req.headers['eo-pages-host'] || req.headers['x-forwarded-host'] || req.headers.host || 'localhost'
-  const protocol = req.headers['x-forwarded-proto'] || 'https'
-  const baseUrl = `${protocol}://${host}`
-
-  async function callKV (action, data) {
-    const kvUrl = `${baseUrl}/api/kv`
-
-    try {
-      const response = await fetch(kvUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Twikoo-Internal': 'true'
-        },
-        body: JSON.stringify({ action, data })
-      })
-
-      const text = await response.text()
-
-      let result
-      try {
-        result = JSON.parse(text)
-      } catch (e) {
-        logger.error('[KV] JSON 解析失败:', text.substring(0, 200))
-        throw new Error(`KV API 返回非 JSON: ${text.substring(0, 200)}`)
+function filterComments (comments, query) {
+  if (!Object.keys(query).length) return comments
+  return comments.filter(comment => {
+    for (const [key, value] of Object.entries(query)) {
+      if (key === '$or') {
+        const orMatch = value.some(cond =>
+          Object.entries(cond).every(([k, v]) => matchCondition(comment, k, v))
+        )
+        if (!orMatch) return false
+      } else if (!matchCondition(comment, key, value)) {
+        return false
       }
-
-      if (result.code !== 0) {
-        throw new Error(result.message || 'KV 操作失败')
-      }
-
-      return result.data
-    } catch (e) {
-      logger.error('[KV] 调用异常:', e.message)
-      throw e
     }
+    return true
+  })
+}
+
+function matchCondition (comment, key, value) {
+  const cv = comment[key]
+  if (value === null || value === undefined) return cv === null || cv === undefined
+  if (typeof value === 'object') {
+    if ('$in' in value) return value.$in.includes(cv)
+    if ('$ne' in value) return cv !== value.$ne
+    if ('$exists' in value) {
+      return value.$exists
+        ? (cv !== undefined && cv !== null && cv !== '')
+        : (cv === undefined || cv === null || cv === '')
+    }
+    if ('$gt' in value) return cv > value.$gt
+    if ('$lt' in value) return cv < value.$lt
+    if ('$regex' in value) return new RegExp(value.$regex, value.$options || '').test(cv)
   }
+  return cv === value
+}
+
+// ==================== Blob 数据库层 ====================
+
+const COMMENTS_KEY = 'comments:all'
+
+function createBlobDatabase () {
+  const store = getStore({ name: 'twikoo', consistency: 'strong' })
+  let commentsCache = null
 
   return {
+    async getAllComments () {
+      if (commentsCache !== null) return commentsCache
+      commentsCache = await store.get(COMMENTS_KEY, { type: 'json' }) ?? []
+      return commentsCache
+    },
+    async saveAllComments (comments) {
+      commentsCache = comments
+      await store.setJSON(COMMENTS_KEY, comments)
+    },
     async getComments (query = {}) {
-      return callKV('getComments', { query })
+      const all = await this.getAllComments()
+      return filterComments(all, query)
     },
     async countComments (query = {}) {
-      const comments = await this.getComments(query)
-      return comments.length
+      return (await this.getComments(query)).length
     },
     async addComment (comment) {
-      return callKV('addComment', { comment })
+      const id = comment._id || uuidv4().replace(/-/g, '')
+      comment._id = id
+      comment.id = id
+      const comments = await this.getAllComments()
+      comments.push(comment)
+      await this.saveAllComments(comments)
+      return { id }
     },
     async updateComment (id, updates) {
-      return callKV('updateComment', { id, updates })
+      const comments = await this.getAllComments()
+      const index = comments.findIndex(c => c._id === id)
+      if (index !== -1) {
+        Object.assign(comments[index], updates)
+        await this.saveAllComments(comments)
+        return { updated: 1 }
+      }
+      return { updated: 0 }
     },
     async deleteComment (id) {
-      return callKV('deleteComment', { id })
+      const comments = await this.getAllComments()
+      const index = comments.findIndex(c => c._id === id)
+      if (index !== -1) {
+        comments.splice(index, 1)
+        await this.saveAllComments(comments)
+        return { deleted: 1 }
+      }
+      return { deleted: 0 }
     },
     async getComment (id) {
-      return callKV('getComment', { id })
+      const comments = await this.getAllComments()
+      return comments.find(c => c._id === id) || null
     },
-    async bulkAddComments (comments) {
-      return callKV('bulkAddComments', { comments })
+    async bulkAddComments (newComments) {
+      const comments = await this.getAllComments()
+      for (const comment of newComments) {
+        const id = comment._id || uuidv4().replace(/-/g, '')
+        comment._id = id
+        comment.id = id
+        comments.push(comment)
+      }
+      await this.saveAllComments(comments)
+      return newComments.length
     },
     async getConfig () {
-      return callKV('getConfig', {})
+      return await store.get('config:main', { type: 'json' }) ?? {}
     },
     async saveConfig (newConfig) {
-      return callKV('saveConfig', { config: newConfig })
+      const current = await this.getConfig()
+      await store.setJSON('config:main', { ...current, ...newConfig })
+      return { updated: 1 }
     },
     async getCounter (url) {
-      return callKV('getCounter', { url })
+      return await store.get(`counter:${encodeURIComponent(url)}`, { type: 'json' })
     },
     async incCounter (url, title) {
-      return callKV('incCounter', { url, title })
+      const key = `counter:${encodeURIComponent(url)}`
+      let counter = await store.get(key, { type: 'json' })
+      if (counter) {
+        counter.time = (counter.time || 0) + 1
+        counter.title = title
+        counter.updated = Date.now()
+      } else {
+        counter = { url, title, time: 1, created: Date.now(), updated: Date.now() }
+      }
+      await store.setJSON(key, counter)
+      return 1
+    },
+    // Cap.js KV hooks
+    async capGet (key) {
+      return await store.get(key, { type: 'json' })
+    },
+    async capSet (key, value) {
+      await store.setJSON(key, value)
+    },
+    async capDel (key) {
+      try { await store.delete(key) } catch (e) {}
     }
   }
 }
 
+function createEoCap (db) {
+  return createCap(kvStorage({
+    get: (k) => db.capGet(k),
+    set: (k, v) => db.capSet(k, v),
+    del: (k) => db.capDel(k)
+  }))
+}
+
 // ==================== 配置管理 ====================
 
-async function readConfig (req) {
+async function readConfig () {
   try {
-    const db = createKVProxy(req)
+    const db = createBlobDatabase()
     config = await db.getConfig()
   } catch (e) {
     logger.error('读取配置失败:', e.message)
@@ -405,12 +716,27 @@ async function login (password) {
   return { code: RES_CODE.SUCCESS }
 }
 
+function getSearchKeyword (event) {
+  if (event.keyword === undefined || event.keyword === null) return ''
+  if (typeof event.keyword !== 'string') throw new Error('搜索关键词必须是字符串')
+  const keyword = event.keyword.trim()
+  if (keyword.length > 100) throw new Error('搜索关键词不能超过 100 个字符')
+  return keyword
+}
+
+function commentMatchesKeyword (comment, keyword) {
+  return [comment.nick, comment.comment].some(value =>
+    typeof value === 'string' && value.toLowerCase().includes(keyword)
+  )
+}
+
 // ==================== 评论读取 ====================
 
 async function commentGet (event, db, accessToken) {
   const res = {}
   try {
     validate(event, ['url'])
+    if (getSearchKeyword(event)) return commentSearch(event, db, accessToken)
     const uid = accessToken
     const isAdminUser = isAdmin(accessToken)
     const limit = parseInt(config.COMMENT_PAGE_SIZE) || 8
@@ -483,6 +809,64 @@ async function commentGet (event, db, accessToken) {
   return res
 }
 
+async function commentSearch (event, db, accessToken) {
+  const res = {}
+  try {
+    validate(event, ['url'])
+    const keyword = getSearchKeyword(event).toLowerCase()
+    const page = Math.max(parseInt(event.page) || 1, 1)
+    const uid = accessToken
+    const isAdminUser = isAdmin(accessToken)
+    const limit = parseInt(config.COMMENT_PAGE_SIZE) || 8
+    const sort = event.sort || 'newest'
+    let more = false
+
+    const urlQuery = getUrlQuery(event.url)
+    const visible = (await db.getComments()).filter(c =>
+      urlQuery.includes(c.url) && (c.isSpam !== true || c.uid === uid || isAdminUser)
+    )
+    const matchedRoots = keyword
+      ? new Set(visible.filter(comment => commentMatchesKeyword(comment, keyword)).map(comment => String(comment.rid || comment._id)))
+      : null
+    let mainComments = visible.filter(comment =>
+      (!comment.rid || comment.rid === '') && (!matchedRoots || matchedRoots.has(String(comment._id)))
+    )
+    const count = mainComments.length
+
+    if (sort === 'oldest') {
+      mainComments.sort((a, b) => a.created - b.created)
+    } else if (sort === 'popular') {
+      mainComments.sort((a, b) => {
+        const ups = (b.ups || []).length - (a.ups || []).length
+        return ups || b.created - a.created
+      })
+    } else {
+      mainComments.sort((a, b) => b.created - a.created)
+    }
+    let top = []
+    if (!config.TOP_DISABLED) {
+      if (page === 1) top = mainComments.filter(c => c.top === true)
+      mainComments = mainComments.filter(c => c.top !== true)
+    }
+    mainComments = mainComments.slice((page - 1) * limit, page * limit + 1)
+    if (mainComments.length > limit) {
+      more = true
+      mainComments = mainComments.slice(0, limit)
+    }
+    mainComments = [...top, ...mainComments]
+
+    const mainIds = new Set(mainComments.map(c => String(c._id)))
+    const replies = visible.filter(c => mainIds.has(String(c.rid)))
+    res.data = parseComment([...mainComments, ...replies], uid, config)
+    res.more = more
+    res.count = count
+  } catch (e) {
+    res.data = []
+    res.message = e.message
+  }
+  return res
+}
+
 // ==================== 管理员评论操作 ====================
 
 async function commentGetForAdmin (event, db, accessToken) {
@@ -499,8 +883,8 @@ async function commentGetForAdmin (event, db, accessToken) {
       comments = comments.filter(c => c.isSpam === true)
     }
 
-    if (event.keyword) {
-      const keyword = event.keyword.toLowerCase()
+    const keyword = getSearchKeyword(event).toLowerCase()
+    if (keyword) {
       comments = comments.filter(c =>
         (c.nick && c.nick.toLowerCase().includes(keyword)) ||
         (c.mail && c.mail.toLowerCase().includes(keyword)) ||
@@ -557,6 +941,24 @@ async function commentDeleteForAdmin (event, db, accessToken) {
   } else {
     res.code = RES_CODE.NEED_LOGIN
     res.message = '请先登录'
+  }
+  return res
+}
+
+// 用户删除自己的评论
+async function commentDeleteForUser (event, db, accessToken) {
+  const res = {}
+  try {
+    const uid = accessToken
+    await checkCommentOwnership(event.id, uid, async (id) => {
+      return db.getComment(id)
+    })
+    await db.deleteComment(event.id)
+    res.code = RES_CODE.SUCCESS
+    res.deleted = 1
+  } catch (e) {
+    res.code = RES_CODE.FAIL
+    res.message = e.message
   }
   return res
 }
@@ -714,7 +1116,7 @@ async function commentSubmit (event, req, db, accessToken) {
   res.id = result.id
 
   // 异步处理垃圾检测和通知
-  postSubmit(data, db).catch(e => {
+  postSubmit(data, db, createMailBridgeContext(req)).catch(e => {
     logger.error('POST_SUBMIT 失败', e.message)
   })
 
@@ -730,6 +1132,10 @@ async function parseCommentData (event, req, accessToken, ip) {
     throw new Error('请先登录管理面板，再使用博主身份发送评论')
   }
 
+  if (event.mail && !isValidEmail(event.mail)) {
+    throw new Error('邮箱格式不合法')
+  }
+
   const hashMethod = config.GRAVATAR_CDN === 'cravatar.cn' ? md5 : sha256
 
   const commentDo = {
@@ -740,7 +1146,7 @@ async function parseCommentData (event, req, accessToken, ip) {
     mailMd5: event.mail ? hashMethod(normalizeMail(event.mail)) : '',
     link: event.link ? event.link : '',
     ua: event.ua,
-    ip: ip,
+    ip,
     master: isBloggerMail,
     url: event.url,
     href: event.href,
@@ -766,7 +1172,7 @@ async function parseCommentData (event, req, accessToken, ip) {
   return commentDo
 }
 
-async function postSubmit (comment, db) {
+async function postSubmit (comment, db, mailContext) {
   try {
     logger.log('POST_SUBMIT')
 
@@ -786,7 +1192,7 @@ async function postSubmit (comment, db) {
     }
 
     // 发送通知
-    await sendNotice(comment, config, getParentComment)
+    await withMailBridgeContext(mailContext, () => sendNotice(comment, config, getParentComment))
   } catch (e) {
     logger.warn('POST_SUBMIT 失败', e)
   }
@@ -822,7 +1228,7 @@ async function checkCaptcha (event, ip) {
   const provider = config.CAPTCHA_PROVIDER
   if (provider === 'Turnstile' && config.TURNSTILE_SITE_KEY && config.TURNSTILE_SECRET_KEY) {
     await checkTurnstileCaptcha({
-      ip: ip,
+      ip,
       turnstileToken: event.turnstileToken,
       turnstileTokenSecretKey: config.TURNSTILE_SECRET_KEY
     })
@@ -835,6 +1241,16 @@ async function checkCaptcha (event, ip) {
       geeTestPassToken: event.geeTestPassToken,
       geeTestGenTime: event.geeTestGenTime
     })
+  } else if (provider === 'Cap' && isBuiltinCap(config)) {
+    if (!event.capToken) {
+      throw new Error('验证码 token 缺失，请刷新页面重试')
+    }
+    // db is not in scope here — re-create blob db for validation
+    const db = createBlobDatabase()
+    await checkCapCaptcha({
+      capToken: event.capToken,
+      cap: createEoCap(db)
+    })
   } else if (provider === 'Cap' && config.CAP_API_ENDPOINT && config.CAP_SECRET_KEY) {
     if (!event.capToken) {
       throw new Error('验证码 token 缺失，请刷新页面重试')
@@ -845,7 +1261,7 @@ async function checkCaptcha (event, ip) {
       capApiEndpoint: config.CAP_API_ENDPOINT
     })
   } else if (provider === 'Cap') {
-    throw new Error('Cap 验证码配置不完整，请联系管理员')
+    throw new Error('Cap 验证码配置不完整：内嵌模式无需额外配置，外部模式需填写 CAP_API_ENDPOINT 与 CAP_SECRET_KEY')
   } else if (provider) {
     throw new Error(`不支持的验证码类型: ${provider}`)
   }
@@ -932,7 +1348,7 @@ async function getRecentComments (event, db) {
       mailMd5: getMailMd5(comment),
       link: comment.link,
       comment: comment.comment,
-      commentText: comment.comment.replace(/<[^>]*>/g, ''),
+      commentText: htmlToText(comment.comment),
       created: comment.created
     }))
   } catch (e) {
@@ -941,7 +1357,7 @@ async function getRecentComments (event, db) {
   return res
 }
 
-// EdgeOne Pages Node Function 入口
+// EdgeOne Makers Node Function 入口
 export async function onRequest (context) {
   const { request } = context
 
@@ -973,6 +1389,8 @@ export async function onRequest (context) {
         path: url.pathname,
         headers,
         body,
+        env: context.env || {},
+        origin: url.origin,
         ip: headers['x-real-ip'] || headers['x-forwarded-for']?.split(',')[0]?.trim() || 'unknown',
         protocol: url.protocol.replace(':', ''),
         get: (name) => headers[name.toLowerCase()]
@@ -1050,6 +1468,20 @@ export async function onRequest (context) {
   })
 }
 
+async function qqNickGet (event) {
+  const res = {}
+  try {
+    validate(event, ['qq'])
+    const nick = await getQQNick(event.qq, config.QQ_API_KEY)
+    res.code = RES_CODE.SUCCESS
+    res.nick = nick
+  } catch (e) {
+    res.code = RES_CODE.FAIL
+    res.message = e.message
+  }
+  return res
+}
+
 // POST 请求处理主逻辑
 async function handlePost (req, res) {
   let accessToken
@@ -1070,10 +1502,10 @@ async function handlePost (req, res) {
     accessToken = event.accessToken || uuidv4().replace(/-/g, '')
 
     // 读取配置
-    await readConfig(req)
+    await readConfig()
 
     // 创建数据库操作对象
-    const db = createKVProxy(req)
+    const db = createBlobDatabase()
 
     switch (event.event) {
       case 'GET_FUNC_VERSION':
@@ -1090,6 +1522,9 @@ async function handlePost (req, res) {
         break
       case 'COMMENT_DELETE_FOR_ADMIN':
         result = await commentDeleteForAdmin(event, db, accessToken)
+        break
+      case 'COMMENT_DELETE_FOR_USER':
+        result = await commentDeleteForUser(event, db, accessToken)
         break
       case 'COMMENT_IMPORT_FOR_ADMIN':
         result = await commentImportForAdmin(event, db, accessToken)
@@ -1128,13 +1563,35 @@ async function handlePost (req, res) {
         result = await getRecentComments(event, db)
         break
       case 'EMAIL_TEST':
-        result = await emailTest(event, config, isAdmin(accessToken))
+        result = await withMailBridgeContext(
+          createMailBridgeContext(req),
+          () => emailTest(event, config, isAdmin(accessToken))
+        )
         break
       case 'UPLOAD_IMAGE':
         result = await uploadImage(event, config)
         break
       case 'COMMENT_EXPORT_FOR_ADMIN':
         result = await commentExportForAdmin(event, db, accessToken)
+        break
+      case 'GET_QQ_NICK':
+        result = await qqNickGet(event)
+        break
+      case 'CAP_CHALLENGE':
+        if (!isBuiltinCap(config)) {
+          result = { code: RES_CODE.FAIL, message: '内嵌 Cap 未启用' }
+        } else {
+          const data = await createChallenge(createEoCap(db))
+          result = { code: RES_CODE.SUCCESS, ...data }
+        }
+        break
+      case 'CAP_REDEEM':
+        if (!isBuiltinCap(config)) {
+          result = { code: RES_CODE.FAIL, message: '内嵌 Cap 未启用' }
+        } else {
+          const data = await redeemChallenge(createEoCap(db), event)
+          result = { code: RES_CODE.SUCCESS, ...data }
+        }
         break
       default:
         if (event.event) {

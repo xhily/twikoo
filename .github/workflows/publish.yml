@@ -3,6 +3,7 @@ name: Publish
 permissions:
   contents: write
   discussions: write
+  id-token: write
 
 on:
   release:
@@ -13,69 +14,108 @@ jobs:
   publish-npm:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: 18
+          node-version: 24
           registry-url: https://registry.npmjs.org/
       - run: yarn install
       - run: yarn build
       - if: "github.event.release.prerelease"
-        run: yarn publish --tag beta
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+        run: npm publish --provenance --tag beta
       - if: "github.event.release.prerelease"
-        run: cd src/server/function/twikoo && yarn publish --tag beta
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+        run: cd src/server/function/twikoo && npm publish --provenance --tag beta
       - if: "github.event.release.prerelease"
-        run: cd src/server/vercel && yarn publish --tag beta
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+        run: cd src/server/vercel && npm publish --provenance --tag beta
       - if: "github.event.release.prerelease"
-        run: cd src/server/self-hosted && yarn publish --tag beta
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+        run: cd src/server/self-hosted && npm publish --provenance --tag beta
       - if: "github.event.release.prerelease"
-        run: cd src/server/netlify && yarn publish --tag beta
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+        run: cd src/server/netlify && npm publish --provenance --tag beta
       - if: "!github.event.release.prerelease"
-        run: yarn publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+        run: npm publish --provenance
       - if: "!github.event.release.prerelease"
-        run: cd src/server/function/twikoo && yarn publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+        run: cd src/server/function/twikoo && npm publish --provenance
       - if: "!github.event.release.prerelease"
-        run: cd src/server/vercel && yarn publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+        run: cd src/server/vercel && npm publish --provenance
       - if: "!github.event.release.prerelease"
-        run: cd src/server/self-hosted && yarn publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+        run: cd src/server/self-hosted && npm publish --provenance
       - if: "!github.event.release.prerelease"
-        run: cd src/server/netlify && yarn publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
-  publish-docker:
+        run: cd src/server/netlify && npm publish --provenance
+
+  verify-npm:
     needs: publish-npm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Wait for npm packages to be available
+        run: |
+          if [ "${{ github.event.release.prerelease }}" = "true" ]; then
+            NPM_TAG="beta"
+          else
+            NPM_TAG="latest"
+          fi
+
+          # All published packages with their paths
+          PACKAGES=(
+            "twikoo:."
+            "twikoo-func:src/server/function/twikoo"
+            "twikoo-vercel:src/server/vercel"
+            "tkserver:src/server/self-hosted"
+            "twikoo-netlify:src/server/netlify"
+          )
+
+          echo "NPM tag: $NPM_TAG"
+          echo "Packages to verify: ${PACKAGES[*]}"
+
+          TIMEOUT=600  # 10 minutes
+          INTERVAL=15  # 15 seconds
+          ELAPSED=0
+
+          while [ $ELAPSED -lt $TIMEOUT ]; do
+            ALL_READY=true
+            for ENTRY in "${PACKAGES[@]}"; do
+              PKG="${ENTRY%%:*}"
+              DIR="${ENTRY##*:}"
+              PKG_VERSION=$(cd "$DIR" && node -p "require('./package.json').version")
+              ACTUAL=$(npm view "$PKG@$NPM_TAG" version --registry=https://registry.npmjs.org 2>/dev/null || true)
+              if [ "$ACTUAL" != "$PKG_VERSION" ]; then
+                echo "  ❌ $PKG: expected $PKG_VERSION (tag: $NPM_TAG), got '${ACTUAL:-not found}'"
+                ALL_READY=false
+              else
+                echo "  ✅ $PKG@$NPM_TAG = $ACTUAL"
+              fi
+            done
+
+            if [ "$ALL_READY" = true ]; then
+              echo "✅ All npm packages are available."
+              exit 0
+            fi
+
+            REMAINING=$((TIMEOUT - ELAPSED))
+            echo "⏳ Not all packages ready yet. ${REMAINING}s remaining. Retrying in ${INTERVAL}s..."
+            sleep $INTERVAL
+            ELAPSED=$((ELAPSED + INTERVAL))
+          done
+
+          echo "❌ Timed out after ${TIMEOUT}s waiting for npm packages to become available."
+          exit 1
+
+  publish-docker:
+    needs: [publish-npm, verify-npm]
     runs-on: ubuntu-latest
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
       -
         name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
       -
         name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
       -
         name: Login to DockerHub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -84,7 +124,7 @@ jobs:
         run: echo "TWIKOO_LATEST_VERSION=$(npm view twikoo@latest version)" >> "$GITHUB_ENV"
       -
         name: Build and push amd64 image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v6
         with:
           context: .
           platforms: linux/amd64,linux/arm64
@@ -94,7 +134,7 @@ jobs:
             imaegoo/twikoo:${{ env.TWIKOO_LATEST_VERSION }}
       -
         name: Build and push arm32v7 image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v6
         with:
           context: .
           platforms: linux/arm/v7
@@ -105,13 +145,13 @@ jobs:
           build-args: NODE_IMAGE=arm32v7/node
 
   publish-pkg:
-    needs: publish-npm
+    needs: [publish-npm, verify-npm]
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: 25.8.1
+          node-version: 26
           registry-url: https://registry.npmjs.org/
 
       - name: get tkserver version

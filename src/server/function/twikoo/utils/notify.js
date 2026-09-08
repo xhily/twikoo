@@ -1,13 +1,25 @@
-const { equalsMail, getAvatar } = require('.')
+const { equalsMail, getAvatar, isValidEmail } = require('.')
 const {
-  getCheerio,
+  getHtmlToText,
   getNodemailer,
   getPushoo
 } = require('./lib')
-const $ = getCheerio()
+const htmlToText = getHtmlToText()
 const pushoo = getPushoo()
 const { RES_CODE } = require('./constants')
 const logger = require('./logger')
+
+// HTML 实体转义，防止用户可控字段（昵称、邮箱等）在邮件 HTML 模板中造成存储型 XSS
+// 仅在渲染邮件时转义，不修改数据库的存储内容
+function escapeHtml (str) {
+  if (typeof str !== 'string') return str
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
 
 let nodemailer
 
@@ -85,13 +97,13 @@ const fn = {
       return
     }
     const SITE_NAME = config.SITE_NAME
-    const NICK = comment.nick
+    const NICK = escapeHtml(comment.nick)
     const IMG = getAvatar(comment, config)
     const IP = comment.ip
-    const MAIL = comment.mail
+    const MAIL = escapeHtml(comment.mail)
     const COMMENT = comment.comment
     const SITE_URL = config.SITE_URL
-    const POST_URL = fn.appendHashToUrl(comment.href || SITE_URL + comment.url, comment.id)
+    const POST_URL = escapeHtml(fn.appendHashToUrl(comment.href || SITE_URL + comment.url, comment.id))
     const emailSubject = config.MAIL_SUBJECT_ADMIN || `${SITE_NAME}上有新评论了`
     let emailContent
     if (config.MAIL_TEMPLATE_ADMIN) {
@@ -115,11 +127,16 @@ const fn = {
           <p>您可以点击<a style="text-decoration:none; color:#12addb" href="${POST_URL}" target="_blank">查看回复的完整內容</a><br></p>
         </div>`
     }
+    const toMail = config.BLOGGER_EMAIL || config.SENDER_EMAIL
+    if (!isValidEmail(toMail)) {
+      logger.warn('博主邮箱格式不合法，跳过发送博主通知：', toMail)
+      return
+    }
     let sendResult
     try {
       sendResult = await transporter.sendMail({
         from: `"${config.SENDER_NAME}" <${config.SENDER_EMAIL}>`,
-        to: config.BLOGGER_EMAIL || config.SENDER_EMAIL,
+        to: toMail,
         subject: emailSubject,
         html: emailContent
       })
@@ -155,12 +172,12 @@ const fn = {
   // 即时消息推送内容获取
   getIMPushContent (comment, config) {
     const SITE_NAME = config.SITE_NAME
-    const NICK = comment.nick
-    const MAIL = comment.mail
+    const NICK = escapeHtml(comment.nick)
+    const MAIL = escapeHtml(comment.mail)
     const IP = comment.ip
-    const COMMENT = $(comment.comment).text()
+    const COMMENT = htmlToText(comment.comment)
     const SITE_URL = config.SITE_URL
-    const POST_URL = fn.appendHashToUrl(comment.href || SITE_URL + comment.url, comment.id)
+    const POST_URL = escapeHtml(fn.appendHashToUrl(comment.href || SITE_URL + comment.url, comment.id))
     const subject = config.MAIL_SUBJECT_ADMIN || `${SITE_NAME}有新评论了`
     const content = `评论人：${NICK} ([${MAIL}](mailto:${MAIL}))
 
@@ -194,14 +211,14 @@ const fn = {
       logger.info('回复自己的评论，不邮件通知')
       return
     }
-    const PARENT_NICK = parentComment.nick
+    const PARENT_NICK = escapeHtml(parentComment.nick)
     const IMG = getAvatar(currentComment, config)
     const PARENT_IMG = getAvatar(parentComment, config)
     const SITE_NAME = config.SITE_NAME
-    const NICK = currentComment.nick
+    const NICK = escapeHtml(currentComment.nick)
     const COMMENT = currentComment.comment
     const PARENT_COMMENT = parentComment.comment
-    const POST_URL = fn.appendHashToUrl(currentComment.href || config.SITE_URL + currentComment.url, currentComment.id)
+    const POST_URL = escapeHtml(fn.appendHashToUrl(currentComment.href || config.SITE_URL + currentComment.url, currentComment.id))
     const SITE_URL = config.SITE_URL
     const emailSubject = config.MAIL_SUBJECT || `${PARENT_NICK}，您在『${SITE_NAME}』上的评论收到了回复`
     let emailContent
@@ -234,6 +251,10 @@ const fn = {
           </div>
         </div>`
     }
+    if (!isValidEmail(parentComment.mail)) {
+      logger.warn('回复通知邮箱格式不合法，跳过发送回复通知：', parentComment.mail)
+      return
+    }
     let sendResult
     try {
       sendResult = await transporter.sendMail({
@@ -262,9 +283,14 @@ const fn = {
         // 邮件测试前清除 transporter，保证读取的是最新的配置
         transporter = null
         await fn.initMailer({ config, throwErr: true })
+        const toMail = event.mail || config.BLOGGER_EMAIL || config.SENDER_EMAIL
+        if (!isValidEmail(toMail)) {
+          res.message = '邮箱格式不合法'
+          return res
+        }
         const sendResult = await transporter.sendMail({
           from: config.SENDER_EMAIL,
-          to: event.mail || config.BLOGGER_EMAIL || config.SENDER_EMAIL,
+          to: toMail,
           subject: 'Twikoo 邮件通知测试邮件',
           html: '如果您收到这封邮件，说明 Twikoo 邮件功能配置正确'
         })

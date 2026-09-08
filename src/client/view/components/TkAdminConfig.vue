@@ -5,6 +5,7 @@
       <span>{{ t('ADMIN_SERVER_VERSION') }}{{ serverVersion }}，</span>
       <span>请参考&nbsp;<a href="https://twikoo.js.org/update.html" target="_blank">版本更新</a>&nbsp;进行升级</span>
     </div>
+    <form @submit.prevent="saveConfig">
     <div class="tk-admin-config-groups">
       <details class="tk-admin-config-group" v-for="settingGroup in settings" :key="settingGroup.name">
         <summary class="tk-admin-config-group-title">{{ settingGroup.name }}</summary>
@@ -14,6 +15,7 @@
             <select v-if="setting.options" v-model="setting.value" class="tk-admin-config-select">
               <option v-for="opt in setting.options" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
             </select>
+            <el-input v-else-if="setting.type === 'textarea'" v-model="setting.value" type="textarea" :rows="5" :placeholder="setting.ph" size="small" />
             <el-input v-else v-model="setting.value" :placeholder="setting.ph" size="small" :show-password="setting.secret" />
           </div>
           <div></div>
@@ -34,9 +36,10 @@
       </details>
     </div>
     <div class="tk-admin-config-actions">
-      <el-button size="small" type="primary" @click="saveConfig">{{ t('ADMIN_CONFIG_SAVE') }}</el-button>
+      <el-button size="small" type="primary" native-type="submit">{{ t('ADMIN_CONFIG_SAVE') }}</el-button>
       <el-button size="small" type="info" @click="resetConfig">{{ t('ADMIN_CONFIG_RESET') }}</el-button>
     </div>
+    </form>
     <div class="tk-admin-config-message">{{ message }}</div>
   </div>
 </template>
@@ -99,6 +102,7 @@ export default {
             { key: 'S3_ACCESS_KEY_ID', desc: t('ADMIN_CONFIG_ITEM_S3_ACCESS_KEY_ID'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}AKIAIOSFODNN7EXAMPLE`, value: '', showIf: (s) => s('IMAGE_CDN') === 's3' },
             { key: 'S3_SECRET_ACCESS_KEY', desc: t('ADMIN_CONFIG_ITEM_S3_SECRET_ACCESS_KEY'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`, value: '', secret: true, showIf: (s) => s('IMAGE_CDN') === 's3' },
             { key: 'S3_ENDPOINT', desc: t('ADMIN_CONFIG_ITEM_S3_ENDPOINT'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}https://xxx.r2.cloudflarestorage.com`, value: '', showIf: (s) => s('IMAGE_CDN') === 's3' },
+            { key: 'S3_FORCE_PATH_STYLE', desc: t('ADMIN_CONFIG_ITEM_S3_FORCE_PATH_STYLE'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}true`, value: '', showIf: (s) => s('IMAGE_CDN') === 's3' },
             { key: 'S3_CDN_URL', desc: t('ADMIN_CONFIG_ITEM_S3_CDN_URL'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}https://cdn.example.com`, value: '', showIf: (s) => s('IMAGE_CDN') === 's3' },
             { key: 'S3_PATH_PREFIX', desc: t('ADMIN_CONFIG_ITEM_S3_PATH_PREFIX'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}images/twikoo`, value: '', showIf: (s) => s('IMAGE_CDN') === 's3' },
             { key: 'NSFW_API_URL', desc: t('ADMIN_CONFIG_ITEM_NSFW_API_URL'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}https://nsfw.example.com`, value: '' },
@@ -130,7 +134,12 @@ export default {
             { key: 'LIMIT_LENGTH', desc: t('ADMIN_CONFIG_ITEM_LIMIT_LENGTH'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}100`, value: '' },
             { key: 'FORBIDDEN_WORDS', desc: t('ADMIN_CONFIG_ITEM_FORBIDDEN_WORDS'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}快递,空包`, value: '' },
             { key: 'BLOCKED_WORDS', desc: t('ADMIN_CONFIG_ITEM_BLOCKED_WORDS'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}快递,空包`, value: '' },
-            { key: 'NOTIFY_SPAM', desc: t('ADMIN_CONFIG_ITEM_NOTIFY_SPAM'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}false`, value: '' }
+            { key: 'NOTIFY_SPAM', desc: t('ADMIN_CONFIG_ITEM_NOTIFY_SPAM'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}false`, value: '' },
+            { key: 'LLM_API_KEY', desc: t('ADMIN_CONFIG_ITEM_LLM_API_KEY'), ph: 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', value: '', secret: true },
+            { key: 'LLM_API_ENDPOINT', desc: t('ADMIN_CONFIG_ITEM_LLM_API_ENDPOINT'), ph: 'https://api.deepseek.com', value: '' },
+            { key: 'LLM_MODEL', desc: t('ADMIN_CONFIG_ITEM_LLM_MODEL'), ph: 'deepseek-v4-pro', value: '' },
+            { key: 'LLM_SPAM_PROMPT', desc: t('ADMIN_CONFIG_ITEM_LLM_SPAM_PROMPT'), ph: '', value: '', type: 'textarea' },
+            { key: 'LLM_MAX_RETRIES', desc: t('ADMIN_CONFIG_ITEM_LLM_MAX_RETRIES'), ph: '3', value: '' }
           ]
         },
         {
@@ -151,8 +160,8 @@ export default {
             { key: 'TURNSTILE_SECRET_KEY', desc: t('ADMIN_CONFIG_ITEM_TURNSTILE_SECRET_KEY'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}0x4AAAAAAAPLTmBm6gHmOnOqC1iwmU12345`, value: '', secret: true, showIf: (s) => s('CAPTCHA_PROVIDER') === 'Turnstile' },
             { key: 'GEETEST_CAPTCHA_ID', desc: t('ADMIN_CONFIG_ITEM_GEETEST_CAPTCHA_ID'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}your_captcha_id`, value: '', showIf: (s) => s('CAPTCHA_PROVIDER') === 'Geetest' },
             { key: 'GEETEST_CAPTCHA_KEY', desc: t('ADMIN_CONFIG_ITEM_GEETEST_CAPTCHA_KEY'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}your_captcha_key`, value: '', secret: true, showIf: (s) => s('CAPTCHA_PROVIDER') === 'Geetest' },
-            { key: 'CAP_API_ENDPOINT', desc: t('ADMIN_CONFIG_ITEM_CAP_API_ENDPOINT'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}https://cap.example.com/d9256640cb53/`, value: '', showIf: (s) => s('CAPTCHA_PROVIDER') === 'Cap' },
-            { key: 'CAP_SECRET_KEY', desc: t('ADMIN_CONFIG_ITEM_CAP_SECRET_KEY'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}your_cap_secret_key`, value: '', secret: true, showIf: (s) => s('CAPTCHA_PROVIDER') === 'Cap' }
+            { key: 'CAP_API_ENDPOINT', desc: t('ADMIN_CONFIG_ITEM_CAP_API_ENDPOINT'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}https://cap.example.com/d9256640cb53/（留空=内嵌，无需外部服务）`, value: '', showIf: (s) => s('CAPTCHA_PROVIDER') === 'Cap' },
+            { key: 'CAP_SECRET_KEY', desc: t('ADMIN_CONFIG_ITEM_CAP_SECRET_KEY'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}仅外部 Cap 需要；内嵌模式可留空`, value: '', secret: true, showIf: (s) => s('CAPTCHA_PROVIDER') === 'Cap' }
           ]
         },
         {
@@ -175,9 +184,9 @@ export default {
             { key: 'SMTP_USER', desc: t('ADMIN_CONFIG_ITEM_SMTP_USER'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}blog@imaegoo.com`, value: '' },
             { key: 'SMTP_PASS', desc: t('ADMIN_CONFIG_ITEM_SMTP_PASS'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}password`, value: '', secret: true },
             { key: 'MAIL_SUBJECT', desc: t('ADMIN_CONFIG_ITEM_MAIL_SUBJECT'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}您在虹墨空间站上的评论收到了回复`, value: '' },
-            { key: 'MAIL_TEMPLATE', desc: t('ADMIN_CONFIG_ITEM_MAIL_TEMPLATE'), ph: '', value: '' },
+            { key: 'MAIL_TEMPLATE', desc: t('ADMIN_CONFIG_ITEM_MAIL_TEMPLATE'), ph: '', value: '', type: 'textarea' },
             { key: 'MAIL_SUBJECT_ADMIN', desc: t('ADMIN_CONFIG_ITEM_MAIL_SUBJECT_ADMIN'), ph: `${t('ADMIN_CONFIG_EXAMPLE')}虹墨空间站上有新评论了`, value: '' },
-            { key: 'MAIL_TEMPLATE_ADMIN', desc: t('ADMIN_CONFIG_ITEM_MAIL_TEMPLATE_ADMIN'), ph: '', value: '' }
+            { key: 'MAIL_TEMPLATE_ADMIN', desc: t('ADMIN_CONFIG_ITEM_MAIL_TEMPLATE_ADMIN'), ph: '', value: '', type: 'textarea' }
           ]
         }
       ],

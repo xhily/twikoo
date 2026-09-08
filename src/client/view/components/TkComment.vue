@@ -31,13 +31,15 @@
             :dislike-count="downs"
             :replies-count="comment.replies.length"
             :show-dislike="config.SHOW_DISLIKE !== 'false'"
+            :show-delete="comment.isOwner"
             @like="onLike"
             @dislike="onDislike"
-            @reply="onReply" />
+            @reply="onReply"
+            @delete="onDelete" />
       </div>
       <div class="tk-content" :class="{ 'tk-content-expand': isContentExpanded || !showContentExpand }" ref="tk-content">
-        <span v-if="comment.pid">{{ t('COMMENT_REPLIED') }} <a class="tk-ruser" :href="`#${comment.pid}`">@{{ comment.ruser }}</a> :</span>
-        <span v-html="comment.comment" ref="comment" @click="popupLightbox"></span>
+        <span v-if="comment.pid">{{ t('COMMENT_REPLIED') }} <a class="tk-ruser" href="#" @click.prevent="scrollToPid(comment.pid)">@{{ comment.ruser }}</a> :</span>
+        <span v-html="sanitizedComment" ref="comment" @click="popupLightbox"></span>
       </div>
       <div class="tk-expand-wrap" v-if="showContentExpand">
         <div class="tk-expand" @click="onContentExpand">{{ t('COMMENT_EXPAND') }}</div>
@@ -76,7 +78,8 @@
             :config="config"
             @expand="onExpand"
             @load="onLoad"
-            @reply="onReplyReply" />
+            @reply="onReplyReply"
+            @refreshed="onRefreshed" />
       </div>
       <div class="tk-expand-wrap" v-if="showExpand && !replying">
         <div class="tk-expand" @click="onExpand">{{ t('COMMENT_EXPAND') }}</div>
@@ -89,7 +92,7 @@
 </template>
 
 <script>
-import { timeago, convertLink, call, renderLinks, renderMath, renderCode, t } from '../../utils'
+import { timeago, convertLink, call, renderLinks, renderMath, renderCode, sanitizeHtml, t } from '../../utils'
 import TkAction from './TkAction.vue'
 import TkAvatar from './TkAvatar.vue'
 import TkSubmit from './TkSubmit.vue'
@@ -156,6 +159,9 @@ export default {
     config: Object
   },
   computed: {
+    sanitizedComment () {
+      return sanitizeHtml(this.comment.comment)
+    },
     displayCreated () {
       return timeago(this.comment.created)
     },
@@ -221,6 +227,15 @@ export default {
         this.$emit('expand')
       }
     },
+    scrollToPid (pid) {
+      const el = document.getElementById(pid)
+      if (el) {
+        el.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        })
+      }
+    },
     async onLike () {
       if (this.likeLoading) return
       this.likeLoading = true
@@ -257,6 +272,17 @@ export default {
       this.pid = id
       this.$emit('reply', this.comment.id)
     },
+    async onDelete () {
+      if (!confirm(t('COMMENT_DELETE_CONFIRM'))) return
+      const { result } = await call(this.$tcb, 'COMMENT_DELETE_FOR_USER', {
+        id: this.comment.id
+      })
+      if (result.code) {
+        alert(result.message)
+      } else {
+        this.$emit('load')
+      }
+    },
     onReplyReply (id) {
       // 楼中楼回复
       this.pid = id
@@ -273,16 +299,21 @@ export default {
       this.$emit('reply', '')
     },
     onLoad () {
-      if (this.comment.replies.length > 0) {
-        this.$refs['tk-replies'].lastElementChild.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        })
-      }
       this.pid = ''
       this.$emit('reply', '')
       this.$emit('load')
       this.onExpand()
+    },
+    onRefreshed () {
+      this.$emit('refreshed')
+      this.$nextTick(() => {
+        if (this.comment.replies && this.comment.replies.length > 0 && this.$refs['tk-replies']) {
+          this.$refs['tk-replies'].lastElementChild.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          })
+        }
+      })
     },
     onExpand () {
       this.isExpanded = true
@@ -299,7 +330,7 @@ export default {
     async checkAuth () {
       // 检查用户身份
       if (this.$tcb) {
-        const currentUser = await this.$tcb.auth.getCurrenUser()
+        const currentUser = await this.$tcb.auth.getCurrentUser()
         this.isLogin = currentUser.loginType === 'CUSTOM'
       } else {
         this.isLogin = this.$twikoo.serverConfig && this.$twikoo.serverConfig.IS_ADMIN
@@ -334,7 +365,7 @@ export default {
         set
       })
       this.loading = false
-      this.$emit('load')
+      Object.assign(this.comment, set)
     }
   },
   mounted () {

@@ -1,5 +1,5 @@
 /**
- * Twikoo EdgeOne Pages 构建脚本
+ * Twikoo EdgeOne Makers 构建脚本
  *
  * 处理不兼容包的覆写，类似 Cloudflare 版本的处理方式
  */
@@ -10,14 +10,14 @@ const zlib = require('zlib')
 
 const srcDir = __dirname
 
-console.log('Twikoo EdgeOne Pages 构建脚本')
+console.log('Twikoo EdgeOne Makers 构建脚本')
 console.log('==============================')
 console.log('')
 
 // 步骤 0: 生成 ip2region 数据文件
 console.log('步骤 0: 生成 ip2region 数据文件...')
 const ip2regionDbPath = path.join(srcDir, 'node_modules/@imaegoo/node-ip2region/data/ip2region.db')
-const ip2regionOutputPath = path.join(srcDir, 'node-functions/ip2region-data.js')
+const ip2regionOutputPath = path.join(srcDir, 'cloud-functions/ip2region-data.js')
 
 if (fs.existsSync(ip2regionDbPath)) {
   const dbBuffer = fs.readFileSync(ip2regionDbPath)
@@ -58,7 +58,7 @@ export default getIp2RegionBuffer
 `
 
   fs.writeFileSync(ip2regionOutputPath, jsContent)
-  console.log(`  ✓ 已生成: node-functions/ip2region-data.js (${(fs.statSync(ip2regionOutputPath).size / 1024 / 1024).toFixed(2)} MB)`)
+  console.log(`  ✓ 已生成: cloud-functions/ip2region-data.js (${(fs.statSync(ip2regionOutputPath).size / 1024 / 1024).toFixed(2)} MB)`)
 } else {
   console.log('  ✗ ip2region.db 不存在，跳过生成')
   console.log('    请先运行: npm install @imaegoo/node-ip2region')
@@ -70,7 +70,7 @@ const packagesToOverwrite = [
   // jsdom 依赖 canvas，Node Function 不支持
   'node_modules/jsdom/lib/api.js',
   // tencentcloud-sdk 体积大且不兼容
-  'node_modules/tencentcloud-sdk-nodejs/tencentcloud/index.js',
+  'node_modules/tencentcloud-sdk-nodejs-tms/tencentcloud/index.js',
   // nodemailer 在某些环境下有兼容性问题
   'node_modules/nodemailer/lib/nodemailer.js'
 ]
@@ -86,7 +86,7 @@ for (const pkg of packagesToOverwrite) {
       fs.copyFileSync(filePath, backupPath)
     }
     // 覆写为空模块
-    fs.writeFileSync(filePath, '// Overwritten for EdgeOne Pages compatibility\nmodule.exports = {};\n')
+    fs.writeFileSync(filePath, '// Overwritten for EdgeOne Makers compatibility\nmodule.exports = {};\n')
     console.log(`  ✓ 已覆写: ${pkg}`)
     overwriteCount++
   } else {
@@ -99,10 +99,10 @@ console.log('')
 // 检查必要文件
 console.log('步骤 2: 检查项目文件...')
 const requiredFiles = [
-  'node-functions/index.js',
-  'node-functions/ip2region-searcher.js',
-  'node-functions/ip2region-data.js',
-  'edge-functions/api/kv.js',
+  'cloud-functions/index.js',
+  'cloud-functions/smtp.go',
+  'cloud-functions/ip2region-searcher.js',
+  'cloud-functions/ip2region-data.js',
   'package.json'
 ]
 
@@ -122,15 +122,14 @@ if (allFilesExist) {
   console.log('构建完成！所有文件已就绪。')
   console.log('')
   console.log('项目结构：')
-  console.log('  node-functions/index.js            - Node Function 主入口')
-  console.log('  node-functions/ip2region-searcher.js - IP 归属地查询器')
-  console.log('  node-functions/ip2region-data.js   - IP 数据库（自动生成）')
-  console.log('  edge-functions/api/kv.js           - Edge Function KV API')
+  console.log('  cloud-functions/index.js            - Node Function 主入口（含 Blob 数据库层）')
+  console.log('  cloud-functions/smtp.go             - Go SMTP Bridge（自定义 SMTP 发信）')
+  console.log('  cloud-functions/ip2region-searcher.js - IP 归属地查询器')
+  console.log('  cloud-functions/ip2region-data.js   - IP 数据库（自动生成）')
   console.log('')
   console.log('部署说明：')
-  console.log('  1. 在 EdgeOne Pages 控制台创建项目')
-  console.log('  2. 创建 KV 命名空间并绑定，变量名：TWIKOO_KV')
-  console.log('  3. 推送代码触发部署')
+  console.log('  1. 在 EdgeOne Makers 控制台创建项目')
+  console.log('  2. 推送代码触发部署（Blob 存储自动初始化，无需额外配置）')
 } else {
   console.log('错误：部分必要文件缺失，请检查项目结构')
   process.exit(1)

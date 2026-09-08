@@ -1,4 +1,5 @@
 import t, { setLanguage } from './i18n'
+import DOMPurify from 'dompurify'
 import timeago from './timeago'
 import marked from './marked'
 import renderCode from './highlight'
@@ -24,6 +25,11 @@ const logger = {
     console.error(`Twikoo: ${message}`, e)
   }
 }
+
+const sanitizeHtml = (html) => DOMPurify.sanitize(typeof html === 'string' ? html : '', {
+  FORBID_TAGS: ['style'],
+  FORBID_ATTR: ['style']
+})
 
 const timestamp = (date = new Date()) => {
   return date.getTime()
@@ -121,6 +127,35 @@ const getUrl = (path) => {
 const getHref = (href) => {
   return window.TWIKOO_MAGIC_HREF ?? href ?? window.location.href
 }
+const LOCALHOST_HOSTNAMES = new Set(['localhost', '127.0.0.1', '0.0.0.0', '::1'])
+
+const isLocalhost = () => LOCALHOST_HOSTNAMES.has(window.location.hostname)
+
+const getVisitorsCountApi = async (tcb, options = {}) => {
+  const result = await call(tcb, 'COUNTER_GET', {
+    envId: options.envId,
+    funcName: options.funcName,
+    url: getUrl(options.path),
+    href: getHref(options.href),
+    title: options.title ?? document.title
+  })
+  return result.result
+}
+
+const updateVisitorsCount = async (tcb, options = {}) => {
+  const counterEl = document.getElementById('twikoo_visitors')
+  if (!counterEl || isLocalhost()) return null
+  try {
+    const counter = await getVisitorsCountApi(tcb, options)
+    if (counter.time || counter.time === 0) {
+      counterEl.innerHTML = counter.time
+    }
+    return counter
+  } catch (e) {
+    logger.warn('Failed to update visitors count', e)
+    return null
+  }
+}
 
 /**
  * 读取文本文件内容
@@ -186,6 +221,7 @@ export {
   setLanguage,
   isNotSet,
   logger,
+  sanitizeHtml,
   timeago,
   timestamp,
   convertLink,
@@ -201,6 +237,8 @@ export {
   initMarkedOwo,
   getCommentsCountApi,
   getRecentCommentsApi,
+  getVisitorsCountApi,
+  updateVisitorsCount,
   getUserAgent,
   getUrl,
   getHref,

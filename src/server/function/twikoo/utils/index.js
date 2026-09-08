@@ -93,12 +93,13 @@ const fn = {
       downs: downs.length,
       liked: ups.includes(uid),
       disliked: downs.includes(uid),
-      replies: replies,
+      replies,
       rid: comment.rid,
       pid: comment.pid,
       ruser: fn.ruser(comment.pid, comments),
       top: comment.top,
       isSpam: comment.isSpam,
+      isOwner: Boolean(uid && comment.uid === uid),
       created: comment.created,
       updated: comment.updated
     }
@@ -231,6 +232,17 @@ const fn = {
   isUrl (s) {
     return /^http(s)?:\/\//.test(s)
   },
+  isValidEmail (mail) {
+    if (!mail || typeof mail !== 'string') return false
+    const trimmed = mail.trim()
+    if (!trimmed) return false
+    // Reject emails with characters that could trigger nodemailer addressparser group parsing (CVE-2025-14874)
+    if (trimmed.indexOf(':') !== -1) return false
+    if (trimmed.indexOf(' ') !== -1) return false
+    if (trimmed.indexOf(';') !== -1) return false
+    // Basic email format validation
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)
+  },
   isQQ (mail) {
     return /^[1-9][0-9]{4,10}$/.test(mail) ||
       /^[1-9][0-9]{4,10}@qq.com$/i.test(mail)
@@ -256,7 +268,7 @@ const fn = {
       if (qqApiKey) {
         headers.Authorization = `Bearer ${qqApiKey}`
       }
-      const result = await axios.get(`https://v1.nsuuu.com/api/qqname?qq=${qqNum}`, { headers })
+      const result = await axios.get(`https://v1.tqq.me/v1/qqname?qq=${qqNum}`, { headers })
       if (result.data?.code === 200 && result.data?.data?.nick) {
         return result.data.data.nick
       }
@@ -354,11 +366,17 @@ const fn = {
       throw new Error('极验验证码检测失败: ' + e.message)
     }
   },
-  async checkCapCaptcha ({ capToken, capSecretKey, capApiEndpoint }) {
+  async checkCapCaptcha ({ capToken, capSecretKey, capApiEndpoint, cap }) {
     try {
-      // 移除末尾的斜杠，避免双斜杠
+      // 内嵌 Cap：直接 validateToken，无需外部 Standalone
+      if (cap) {
+        const { validateToken } = require('./cap')
+        const ok = await validateToken(cap, capToken)
+        if (!ok) throw new Error('验证码错误')
+        return
+      }
+      // 外部 Cap Standalone：HTTP siteverify
       const endpoint = capApiEndpoint.replace(/\/$/, '')
-      // Cap 的 siteverify 端点
       const url = `${endpoint}/siteverify`
       logger.log('Cap验证码验证URL:', url)
       logger.log('Cap验证码验证参数:', { secret: capSecretKey ? '***' : undefined, response: capToken.substring(0, 20) + '...' })
@@ -400,8 +418,7 @@ const fn = {
       HIGHLIGHT_THEME: config.HIGHLIGHT_THEME,
       HIGHLIGHT_PLUGIN: config.HIGHLIGHT_PLUGIN,
       LIMIT_LENGTH: config.LIMIT_LENGTH,
-      CAPTCHA_PROVIDER: config.CAPTCHA_PROVIDER,
-      QQ_API_KEY: config.QQ_API_KEY
+      CAPTCHA_PROVIDER: config.CAPTCHA_PROVIDER
     }
 
     // 仅在明确指定使用 Turnstile 时下发 Turnstile 的 site key
@@ -414,9 +431,13 @@ const fn = {
       baseConfig.GEETEST_CAPTCHA_ID = config.GEETEST_CAPTCHA_ID
     }
 
-    // 仅在明确指定使用 Cap 时下发 Cap 的 api endpoint
+    // Cap：有外部 endpoint 则下发；否则标记 builtin，前端走 twikoo 事件代理
     if (config.CAPTCHA_PROVIDER === 'Cap') {
-      baseConfig.CAP_API_ENDPOINT = config.CAP_API_ENDPOINT
+      if (config.CAP_API_ENDPOINT) {
+        baseConfig.CAP_API_ENDPOINT = config.CAP_API_ENDPOINT
+      } else {
+        baseConfig.CAP_BUILTIN = true
+      }
     }
 
     return {
@@ -445,6 +466,20 @@ const fn = {
         throw new Error(`参数"${requiredParam}"不合法`)
       }
     }
+  },
+  // 校验评论归属：确认评论存在且属于当前用户
+  async checkCommentOwnership (id, uid, getComment) {
+    fn.validate({ id }, ['id'])
+    const comment = await getComment(id)
+    if (!comment) {
+      throw new Error('评论不存在')
+    }
+    // 无 token 的请求不具备任何归属权，必须直接拒绝，
+    // 防止 comment.uid 与 uid 同时为 undefined 时误判为本人
+    if (!uid || comment.uid !== uid) {
+      throw new Error('只能删除自己的评论')
+    }
+    return comment
   }
 }
 

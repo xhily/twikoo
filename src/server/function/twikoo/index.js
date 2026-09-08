@@ -7,7 +7,7 @@
 const { version: VERSION } = require('./package.json')
 const tcb = require('@cloudbase/node-sdk') // 云开发 SDK
 const {
-  getCheerio,
+  getHtmlToText,
   getDomPurify,
   getMd5,
   getSha256,
@@ -34,8 +34,17 @@ const {
   checkCapCaptcha,
   getConfig,
   getConfigForAdmin,
-  validate
+  validate,
+  checkCommentOwnership,
+  isValidEmail
 } = require('./utils')
+const {
+  createCap,
+  tcbStorage,
+  createChallenge,
+  redeemChallenge,
+  isBuiltinCap
+} = require('./utils/cap')
 const {
   jsonParse,
   commentImportValine,
@@ -54,7 +63,7 @@ const app = tcb.init({ env: tcb.SYMBOL_CURRENT_ENV })
 const auth = app.auth()
 const db = app.database()
 const _ = db.command
-const $ = getCheerio()
+const htmlToText = getHtmlToText()
 const DOMPurify = getDomPurify()
 const md5 = getMd5()
 const sha256 = getSha256()
@@ -146,6 +155,15 @@ exports.main = async (event, context) => {
       case 'COMMENT_EXPORT_FOR_ADMIN': // >= 1.6.13
         res = await commentExportForAdmin(event)
         break
+      case 'COMMENT_DELETE_FOR_USER':
+        res = await commentDeleteForUser(event)
+        break
+      case 'CAP_CHALLENGE': // embedded Cap.js
+        res = await capChallenge()
+        break
+      case 'CAP_REDEEM':
+        res = await capRedeem(event)
+        break
       default:
         if (event.event) {
           res.code = RES_CODE.EVENT_NOT_EXIST
@@ -231,11 +249,30 @@ function getAdminTicket (credentials) {
   return ticket
 }
 
+function getSearchKeyword (event) {
+  if (event.keyword === undefined || event.keyword === null) return ''
+  if (typeof event.keyword !== 'string') throw new Error('搜索关键词必须是字符串')
+  const keyword = event.keyword.trim()
+  if (keyword.length > 100) throw new Error('搜索关键词不能超过 100 个字符')
+  return keyword
+}
+
+function commentMatchesKeyword (comment, keyword) {
+  return [comment.nick, comment.comment].some(value =>
+    typeof value === 'string' && value.toLowerCase().includes(keyword)
+  )
+}
+
+function escapeRegExp (value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
 // 读取评论
 async function commentGet (event) {
   const res = {}
   try {
     validate(event, ['url'])
+    if (getSearchKeyword(event)) return commentSearch(event)
     const uid = await auth.getEndUserInfo().userInfo.uid
     const isAdminUser = await isAdmin()
     const limit = parseInt(config.COMMENT_PAGE_SIZE) || 8
@@ -322,6 +359,80 @@ async function commentGet (event) {
   return res
 }
 
+async function commentSearch (event) {
+  const res = {}
+  try {
+    validate(event, ['url'])
+    const keyword = getSearchKeyword(event).toLowerCase()
+    const page = Math.max(parseInt(event.page) || 1, 1)
+    const uid = await auth.getEndUserInfo().userInfo.uid
+    const isAdminUser = await isAdmin()
+    const limit = parseInt(config.COMMENT_PAGE_SIZE) || 8
+    const sort = event.sort || 'newest'
+    let more = false
+
+    const condition = { url: _.in(getUrlQuery(event.url)) }
+    const query = getCommentQuery({ condition, uid, isAdminUser })
+    const searchComments = []
+    let cursor
+    while (true) {
+      const batchQuery = cursor
+        ? _.and(query, _.or(
+          { created: _.gt(cursor.created) },
+          { created: cursor.created, _id: _.gt(cursor._id) }
+        ))
+        : query
+      const batch = await db.collection('comment')
+        .where(batchQuery)
+        .orderBy('created', 'asc')
+        .orderBy('_id', 'asc')
+        .limit(100)
+        .get()
+      searchComments.push(...batch.data)
+      if (batch.data.length < 100) break
+      cursor = batch.data[batch.data.length - 1]
+    }
+    const matchedRoots = new Set(searchComments
+      .filter(comment => commentMatchesKeyword(comment, keyword))
+      .map(comment => String(comment.rid || comment._id)))
+    let main = searchComments.filter(comment =>
+      (!comment.rid || comment.rid === '') && matchedRoots.has(String(comment._id))
+    )
+    const count = main.length
+
+    main.sort((a, b) => {
+      if (sort === 'oldest') return a.created - b.created
+      if (sort === 'popular') {
+        const ups = (b.ups || []).length - (a.ups || []).length
+        if (ups) return ups
+      }
+      return b.created - a.created
+    })
+    let top = []
+    if (!config.TOP_DISABLED) {
+      if (page === 1) top = main.filter(comment => comment.top === true)
+      main = main.filter(comment => comment.top !== true)
+    }
+    main = main.slice((page - 1) * limit, page * limit + 1)
+
+    if (main.length > limit) {
+      more = true
+      main = main.slice(0, limit)
+    }
+    main = [...top, ...main]
+
+    const mainIds = new Set(main.map(comment => String(comment._id)))
+    const reply = searchComments.filter(comment => mainIds.has(String(comment.rid)))
+    res.data = parseComment([...main, ...reply], uid, config)
+    res.more = more
+    res.count = count
+  } catch (e) {
+    res.data = []
+    res.message = e.message
+  }
+  return res
+}
+
 function getCommentQuery ({ condition, uid, isAdminUser }) {
   return _.or(
     { ...condition, isSpam: _.neq(isAdminUser ? 'imaegoo' : true) },
@@ -369,9 +480,10 @@ function getCommentSearchCondition (event) {
         break
     }
   }
-  if (event.keyword) {
+  const keyword = getSearchKeyword(event)
+  if (keyword) {
     const regExp = new db.RegExp({
-      regexp: event.keyword,
+      regexp: escapeRegExp(keyword),
       options: 'i'
     })
     condition = _.or(
@@ -424,6 +536,25 @@ async function commentDeleteForAdmin (event) {
   } else {
     res.code = RES_CODE.NEED_LOGIN
     res.message = '请先登录'
+  }
+  return res
+}
+
+// 用户删除自己的评论
+async function commentDeleteForUser (event) {
+  const res = {}
+  try {
+    const uid = await getUid()
+    await checkCommentOwnership(event.id, uid, async (id) => {
+      const doc = await db.collection('comment').doc(id).get()
+      return doc.data && doc.data.length > 0 ? doc.data[0] : null
+    })
+    const data = await db.collection('comment').doc(event.id).delete()
+    res.code = RES_CODE.SUCCESS
+    res.deleted = data.deleted
+  } catch (e) {
+    res.code = RES_CODE.FAIL
+    res.message = e.message
   }
   return res
 }
@@ -656,6 +787,7 @@ async function parse (comment) {
   const isAdminUser = await isAdmin()
   const isBloggerMail = equalsMail(comment.mail, config.BLOGGER_EMAIL)
   if (isBloggerMail && !isAdminUser) throw new Error('请先登录管理面板，再使用博主身份发送评论')
+  if (comment.mail && !isValidEmail(comment.mail)) throw new Error('邮箱格式不合法')
   const hashMethod = config.GRAVATAR_CDN === 'cravatar.cn' ? md5 : sha256
   const commentDo = {
     uid: await getUid(),
@@ -735,6 +867,14 @@ async function checkCaptcha (comment) {
       geeTestPassToken: comment.geeTestPassToken,
       geeTestGenTime: comment.geeTestGenTime
     })
+  } else if (provider === 'Cap' && isBuiltinCap(config)) {
+    if (!comment.capToken) {
+      throw new Error('验证码 token 缺失，请刷新页面重试')
+    }
+    await checkCapCaptcha({
+      capToken: comment.capToken,
+      cap: createCap(tcbStorage(db))
+    })
   } else if (provider === 'Cap' && config.CAP_API_ENDPOINT && config.CAP_SECRET_KEY) {
     if (!comment.capToken) {
       throw new Error('验证码 token 缺失，请刷新页面重试')
@@ -745,7 +885,7 @@ async function checkCaptcha (comment) {
       capApiEndpoint: config.CAP_API_ENDPOINT
     })
   } else if (provider === 'Cap') {
-    throw new Error('Cap 验证码配置不完整，请联系管理员')
+    throw new Error('Cap 验证码配置不完整：内嵌模式无需额外配置，外部模式需填写 CAP_API_ENDPOINT 与 CAP_SECRET_KEY')
   } else if (provider) {
     throw new Error(`不支持的验证码类型: ${provider}`)
   }
@@ -886,7 +1026,7 @@ async function getRecentComments (event) {
         mailMd5: getMailMd5(comment),
         link: comment.link,
         comment: comment.comment,
-        commentText: $(comment.comment).text(),
+        commentText: htmlToText(comment.comment),
         created: comment.created
       }
     })
@@ -1002,9 +1142,27 @@ function isRecursion (context) {
   return envObj.TCB_SOURCE.substr(-3, 3) === 'scf'
 }
 
+async function capChallenge () {
+  if (!isBuiltinCap(config)) {
+    return { code: RES_CODE.FAIL, message: '内嵌 Cap 未启用' }
+  }
+  const cap = createCap(tcbStorage(db))
+  const data = await createChallenge(cap)
+  return { code: RES_CODE.SUCCESS, ...data }
+}
+
+async function capRedeem (event) {
+  if (!isBuiltinCap(config)) {
+    return { code: RES_CODE.FAIL, message: '内嵌 Cap 未启用' }
+  }
+  const cap = createCap(tcbStorage(db))
+  const data = await redeemChallenge(cap, event)
+  return { code: RES_CODE.SUCCESS, ...data }
+}
+
 // 建立数据库 collections
 async function createCollections () {
-  const collections = ['comment', 'config', 'counter']
+  const collections = ['comment', 'config', 'counter', 'cap_challenges', 'cap_tokens']
   const res = {}
   for (const collection of collections) {
     try {

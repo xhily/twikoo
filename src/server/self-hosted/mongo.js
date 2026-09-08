@@ -10,7 +10,7 @@ const getUserIP = require('get-user-ip')
 const { URL } = require('url')
 const { v4: uuidv4 } = require('uuid') // 用户 id 生成
 const {
-  getCheerio,
+  getHtmlToText,
   getDomPurify,
   getMd5,
   getSha256,
@@ -36,8 +36,16 @@ const {
   checkCapCaptcha,
   getConfig,
   getConfigForAdmin,
-  validate
+  validate,
+  checkCommentOwnership
 } = require('twikoo-func/utils')
+const {
+  createCap,
+  mongoStorage,
+  createChallenge,
+  redeemChallenge,
+  isBuiltinCap
+} = require('twikoo-func/utils/cap')
 const {
   jsonParse,
   commentImportValine,
@@ -51,7 +59,7 @@ const { sendNotice, emailTest } = require('twikoo-func/utils/notify')
 const { uploadImage } = require('twikoo-func/utils/image')
 const logger = require('twikoo-func/utils/logger')
 
-const $ = getCheerio()
+const htmlToText = getHtmlToText()
 const DOMPurify = getDomPurify()
 const md5 = getMd5()
 const sha256 = getSha256()
@@ -65,9 +73,12 @@ const TWIKOO_REQ_TIMES_CLEAR_TIME = parseInt(process.env.TWIKOO_REQ_TIMES_CLEAR_
 let db = null
 let config
 let requestTimes = {}
+let client = null
+let requestTimesTimer = null
 
 module.exports = async (request, response) => {
   let accessToken
+  let hasClientToken = false
   const event = request.body || {}
   logger.log('请求 IP：', getIp(request))
   logger.log('请求函数：', event.event)
@@ -75,6 +86,8 @@ module.exports = async (request, response) => {
   let res = {}
   try {
     protect(request)
+    // 判断客户端是否自带 accessToken，须在 anonymousSignIn 回填身份之前
+    hasClientToken = !!(request.body && request.body.accessToken)
     accessToken = anonymousSignIn(request)
     await connectToDatabase(process.env.MONGODB_URI || process.env.MONGO_URL)
     await readConfig()
@@ -98,6 +111,9 @@ module.exports = async (request, response) => {
         break
       case 'COMMENT_DELETE_FOR_ADMIN':
         res = await commentDeleteForAdmin(event)
+        break
+      case 'COMMENT_DELETE_FOR_USER':
+        res = await commentDeleteForUser(event)
         break
       case 'COMMENT_IMPORT_FOR_ADMIN':
         res = await commentImportForAdmin(event)
@@ -144,6 +160,12 @@ module.exports = async (request, response) => {
       case 'COMMENT_EXPORT_FOR_ADMIN': // >= 1.6.13
         res = await commentExportForAdmin(event)
         break
+      case 'CAP_CHALLENGE':
+        res = await capChallenge()
+        break
+      case 'CAP_REDEEM':
+        res = await capRedeem(event)
+        break
       default:
         if (event.event) {
           res.code = RES_CODE.EVENT_NOT_EXIST
@@ -161,7 +183,9 @@ module.exports = async (request, response) => {
     res.code = RES_CODE.FAIL
     res.message = e.message
   }
-  if (!res.code && !request.body.accessToken) {
+  // 客户端未携带 accessToken 时，将本次绑定的身份令牌随响应返回，
+  // 客户端会持久化并在后续请求中携带，从而获得稳定的匿名身份
+  if (!res.code && !hasClientToken) {
     res.accessToken = accessToken
   }
   logger.log('请求返回：', res)
@@ -207,7 +231,10 @@ function anonymousSignIn (request) {
     if (request.body.accessToken) {
       return request.body.accessToken
     } else {
-      return uuidv4().replace(/-/g, '')
+      // 为匿名访客签发固定身份令牌，写回请求体供本次请求的
+      // 评论存储（uid）与归属校验使用，避免出现 undefined 身份
+      request.body.accessToken = uuidv4().replace(/-/g, '')
+      return request.body.accessToken
     }
   }
 }
@@ -221,7 +248,7 @@ async function connectToDatabase (uri) {
   if (!uri) throw new Error('未设置环境变量 MONGODB_URI | MONGO_URL')
   // If no connection is cached, create a new one
   logger.info('Connecting to database...')
-  const client = await MongoClient.connect(uri, {})
+  client = await MongoClient.connect(uri, {})
   // Select the database through the connection,
   // using the database path of the connection string
   const dbName = (new URL(uri)).pathname.substring(1) || 'twikoo'
@@ -262,11 +289,30 @@ async function login (password) {
   }
 }
 
+function getSearchKeyword (event) {
+  if (event.keyword === undefined || event.keyword === null) return ''
+  if (typeof event.keyword !== 'string') throw new Error('搜索关键词必须是字符串')
+  const keyword = event.keyword.trim()
+  if (keyword.length > 100) throw new Error('搜索关键词不能超过 100 个字符')
+  return keyword
+}
+
+function commentMatchesKeyword (comment, keyword) {
+  return [comment.nick, comment.comment].some(value =>
+    typeof value === 'string' && value.toLowerCase().includes(keyword)
+  )
+}
+
+function escapeRegExp (value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
 // 读取评论
 async function commentGet (event) {
   const res = {}
   try {
     validate(event, ['url'])
+    if (getSearchKeyword(event)) return commentSearch(event)
     const uid = event.accessToken
     const isAdminUser = isAdmin(event.accessToken)
     const limit = parseInt(config.COMMENT_PAGE_SIZE) || 8
@@ -352,6 +398,62 @@ async function commentGet (event) {
   return res
 }
 
+async function commentSearch (event) {
+  const res = {}
+  try {
+    validate(event, ['url'])
+    const keyword = getSearchKeyword(event).toLowerCase()
+    const page = Math.max(parseInt(event.page) || 1, 1)
+    const uid = event.accessToken
+    const isAdminUser = isAdmin(event.accessToken)
+    const limit = parseInt(config.COMMENT_PAGE_SIZE) || 8
+    const sort = event.sort || 'newest'
+    let more = false
+
+    const condition = { url: { $in: getUrlQuery(event.url) } }
+    const query = getCommentQuery({ condition, uid, isAdminUser })
+    const searchComments = await db.collection('comment').find(query).toArray()
+    const matchedRoots = new Set(searchComments
+      .filter(comment => commentMatchesKeyword(comment, keyword))
+      .map(comment => String(comment.rid || comment._id)))
+    let main = searchComments.filter(comment =>
+      (!comment.rid || comment.rid === '') && matchedRoots.has(String(comment._id))
+    )
+    const count = main.length
+
+    main.sort((a, b) => {
+      if (sort === 'oldest') return a.created - b.created
+      if (sort === 'popular') {
+        const ups = (b.ups || []).length - (a.ups || []).length
+        if (ups) return ups
+      }
+      return b.created - a.created
+    })
+    let top = []
+    if (!config.TOP_DISABLED) {
+      if (page === 1) top = main.filter(comment => comment.top === true)
+      main = main.filter(comment => comment.top !== true)
+    }
+    main = main.slice((page - 1) * limit, page * limit + 1)
+
+    if (main.length > limit) {
+      more = true
+      main = main.slice(0, limit)
+    }
+    main = [...top, ...main]
+
+    const mainIds = new Set(main.map(comment => comment._id.toString()))
+    const reply = searchComments.filter(comment => mainIds.has(String(comment.rid)))
+    res.data = parseComment([...main, ...reply], uid, config)
+    res.more = more
+    res.count = count
+  } catch (e) {
+    res.data = []
+    res.message = e.message
+  }
+  return res
+}
+
 function getCommentQuery ({ condition, uid, isAdminUser }) {
   return {
     $or: [
@@ -399,9 +501,10 @@ function getCommentSearchCondition (event) {
         break
     }
   }
-  if (event.keyword) {
+  const keyword = getSearchKeyword(event)
+  if (keyword) {
     const regExp = {
-      $regex: event.keyword,
+      $regex: escapeRegExp(keyword),
       $options: 'i'
     }
     condition = {
@@ -456,6 +559,24 @@ async function commentDeleteForAdmin (event) {
   } else {
     res.code = RES_CODE.NEED_LOGIN
     res.message = '请先登录'
+  }
+  return res
+}
+
+// 用户删除自己的评论
+async function commentDeleteForUser (event) {
+  const res = {}
+  try {
+    const uid = event.accessToken
+    await checkCommentOwnership(event.id, uid, async (id) => {
+      return db.collection('comment').findOne({ _id: id })
+    })
+    const data = await db.collection('comment').deleteOne({ _id: event.id })
+    res.code = RES_CODE.SUCCESS
+    res.deleted = data.deletedCount
+  } catch (e) {
+    res.code = RES_CODE.FAIL
+    res.message = e.message
   }
   return res
 }
@@ -753,6 +874,14 @@ async function checkCaptcha (comment, request) {
       geeTestPassToken: comment.geeTestPassToken,
       geeTestGenTime: comment.geeTestGenTime
     })
+  } else if (provider === 'Cap' && isBuiltinCap(config)) {
+    if (!comment.capToken) {
+      throw new Error('验证码 token 缺失，请刷新页面重试')
+    }
+    await checkCapCaptcha({
+      capToken: comment.capToken,
+      cap: createCap(mongoStorage(db))
+    })
   } else if (provider === 'Cap' && config.CAP_API_ENDPOINT && config.CAP_SECRET_KEY) {
     if (!comment.capToken) {
       throw new Error('验证码 token 缺失，请刷新页面重试')
@@ -763,7 +892,7 @@ async function checkCaptcha (comment, request) {
       capApiEndpoint: config.CAP_API_ENDPOINT
     })
   } else if (provider === 'Cap') {
-    throw new Error('Cap 验证码配置不完整，请联系管理员')
+    throw new Error('Cap 验证码配置不完整：内嵌模式无需额外配置，外部模式需填写 CAP_API_ENDPOINT 与 CAP_SECRET_KEY')
   } else if (provider) {
     throw new Error(`不支持的验证码类型: ${provider}`)
   }
@@ -905,7 +1034,7 @@ async function getRecentComments (event) {
         mailMd5: getMailMd5(comment),
         link: comment.link,
         comment: comment.comment,
-        commentText: $(comment.comment).text(),
+        commentText: htmlToText(comment.comment),
         created: comment.created
       }
     })
@@ -992,7 +1121,7 @@ function isAdmin (accessToken) {
 
 // 建立数据库 collections
 async function createCollections () {
-  const collections = ['comment', 'config', 'counter']
+  const collections = ['comment', 'config', 'counter', 'cap_challenges', 'cap_tokens']
   const res = {}
   for (const collection of collections) {
     try {
@@ -1002,6 +1131,22 @@ async function createCollections () {
     }
   }
   return res
+}
+
+async function capChallenge () {
+  if (!isBuiltinCap(config)) {
+    return { code: RES_CODE.FAIL, message: '内嵌 Cap 未启用' }
+  }
+  const data = await createChallenge(createCap(mongoStorage(db)))
+  return { code: RES_CODE.SUCCESS, ...data }
+}
+
+async function capRedeem (event) {
+  if (!isBuiltinCap(config)) {
+    return { code: RES_CODE.FAIL, message: '内嵌 Cap 未启用' }
+  }
+  const data = await redeemChallenge(createCap(mongoStorage(db)), event)
+  return { code: RES_CODE.SUCCESS, ...data }
 }
 
 function getIp (request) {
@@ -1015,8 +1160,22 @@ function getIp (request) {
   return getUserIP(request)
 }
 
+async function shutdown () {
+  if (requestTimesTimer) {
+    clearInterval(requestTimesTimer)
+    requestTimesTimer = null
+  }
+  if (client) {
+    await client.close()
+    client = null
+    db = null
+  }
+}
+
 function clearRequestTimes () {
   requestTimes = {}
 }
 
-setInterval(clearRequestTimes, TWIKOO_REQ_TIMES_CLEAR_TIME)
+requestTimesTimer = setInterval(clearRequestTimes, TWIKOO_REQ_TIMES_CLEAR_TIME)
+
+module.exports.shutdown = shutdown

@@ -43,7 +43,7 @@
         <div class="tk-panel" v-if="isLogin">
           <div class="tk-panel-title">
             <div>{{ t('ADMIN_TITLE') }}</div>
-            <a class="tk-panel-logout" href="#" @click="onLogout">{{ t('ADMIN_LOGOUT') }}</a>
+            <a class="tk-panel-logout" href="#" @click.prevent="onLogout">{{ t('ADMIN_LOGOUT') }}</a>
           </div>
           <div class="tk-tabs">
             <div class="tk-tab" :class="{ __active: activeTabName === 'comment' }" @click="activeTabName = 'comment'">{{ t('ADMIN_COMMENT') }}</div>
@@ -190,7 +190,7 @@ export default {
     async checkAuth () {
       // 检查用户身份
       if (this.$tcb) {
-        const currentUser = await this.$tcb.auth.getCurrenUser()
+        const currentUser = await this.$tcb.auth.getCurrentUser()
         this.isLogin = currentUser.loginType === 'CUSTOM'
       } else {
         const result = await call(this.$tcb, 'GET_CONFIG')
@@ -244,7 +244,8 @@ export default {
   overflow-y: auto;
   pointer-events: all;
   color: #ffffff;
-  background-color: rgba(0,0,0,0.60);
+  background-color: rgba(0, 0, 0, 0.85);
+  -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
   transition: all 0.5s ease;
   visibility: hidden;
@@ -271,10 +272,9 @@ export default {
   text-decoration: none;
   cursor: pointer;
   position: sticky;
-  float: right;
   display: block;
-  top: 0;
-  right: 0;
+  top: 1rem;
+  left: calc(100% - 3rem);
   width: 1rem;
   height: 1rem;
   padding: 1rem;
